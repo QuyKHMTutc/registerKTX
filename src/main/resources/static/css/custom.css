@@ -4,10 +4,10 @@
 
 :root {
     /* Professional Color Palette - Clean & Trustworthy */
-    --primary-color: #0f172a;
-    /* Slate 900 */
-    --primary-hover: #1e293b;
-    /* Slate 800 */
+    --primary-color: #4f46e5;
+    /* Indigo 600 */
+    --primary-hover: #4338ca;
+    /* Indigo 700 */
     --secondary-color: #64748b;
     /* Slate 500 */
     --accent-color: #3b82f6;
@@ -23,24 +23,24 @@
     /* Sky 500 */
 
     /* Gradients (Subtle) */
-    --gradient-primary: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
     --gradient-secondary: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
     --gradient-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
 
     /* Backgrounds */
-    --bg-body: #f1f5f9;
-    /* Slate 100 */
+    --bg-body: #f8fafc;
+    /* Slate 50 */
     --bg-surface: #ffffff;
     --bg-glass: rgba(255, 255, 255, 0.95);
     /* Less transparency */
     --bg-glass-dark: #1e293b;
 
     /* Text */
-    --text-primary: #0f172a;
-    /* Slate 900 */
-    --text-secondary: #475569;
-    /* Slate 600 */
+    --text-primary: #1e293b;
+    /* Slate 800 */
+    --text-secondary: #64748b;
+    /* Slate 500 */
     --text-muted: #94a3b8;
     /* Slate 400 */
     --text-light: #f8fafc;
@@ -64,6 +64,95 @@
     --transition-fast: all 0.2s ease;
     --transition-base: all 0.2s ease-in-out;
     --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+    --bg-body: #0f172a;
+    /* Slate 900 */
+    --bg-surface: #1e293b;
+    /* Slate 800 */
+    --bg-glass: rgba(30, 41, 59, 0.95);
+
+    --text-primary: #f8fafc;
+    /* Slate 50 */
+    --text-secondary: #cbd5e1;
+    /* Slate 300 */
+    --text-muted: #94a3b8;
+    /* Slate 400 */
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+
+    /* Override specific component colors for dark mode */
+    --primary-color: #6366f1;
+    /* Lighter Indigo for dark mode */
+}
+
+/* Dark Mode Specific Overrides */
+body.dark-mode .card,
+body.dark-mode .navbar,
+body.dark-mode .sidebar,
+body.dark-mode .table-responsive,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: var(--bg-surface);
+    border-color: #334155;
+    /* Slate 700 */
+    color: var(--text-primary);
+}
+
+body.dark-mode .table thead th {
+    background-color: #1e293b;
+    border-bottom-color: #334155;
+    color: var(--text-secondary);
+}
+
+body.dark-mode .table tbody td {
+    border-bottom-color: #334155;
+    color: var(--text-primary);
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+body.dark-mode .text-muted {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #334155;
+    border-color: #475569;
+    color: #f8fafc;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background-color: #475569;
+}
+
+body.dark-mode .admin-sidebar .nav-link {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .admin-sidebar .nav-link:hover {
+    background-color: #334155;
+    color: white;
+}
+
+body.dark-mode .admin-sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Ensure headings are light in dark mode */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: var(--text-primary);
 }
 
 /* ============================================
@@ -106,46 +195,43 @@ a:hover {
    UTILITY CLASSES & COMPONENTS
    ============================================ */
 
-/* Glassmorphism */
+/* Glassmorphism (Reduced usage) */
 .glass-panel {
-    background: var(--bg-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: var(--shadow-glass);
+    background: white;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-sm);
 }
 
 .glass-header {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
     box-shadow: var(--shadow-sm);
 }
 
 /* Cards */
 .card {
-    border: none;
+    border: 1px solid #e2e8f0;
     border-radius: var(--radius-lg);
-    background: var(--bg-surface);
+    background: white;
     box-shadow: var(--shadow-sm);
-    transition: var(--transition-base);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .card:hover {
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-4px);
-    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    /* Subtle lift effect */
+    border-color: #cbd5e1;
 }
 
 .card-header {
-    background: transparent;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 1.5rem;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem 1.5rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .card-body {
@@ -155,35 +241,40 @@ a:hover {
 /* Buttons */
 .btn {
     border-radius: var(--radius-md);
-    padding: 0.625rem 1.5rem;
-    font-weight: 600;
-    transition: var(--transition-base);
-    letter-spacing: 0.01em;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    letter-spacing: 0;
     position: relative;
     overflow: hidden;
+    border: 1px solid transparent;
+    /* Ensure border exists */
 }
 
 .btn-sm {
-    padding: 0.375rem 0.75rem;
+    padding: 0.25rem 0.75rem;
     font-size: 0.875rem;
     border-radius: var(--radius-sm);
 }
 
 .btn-primary {
-    background: var(--gradient-primary);
-    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
     color: white;
 }
 
 .btn-primary:hover {
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
     color: white;
 }
 
 .btn-secondary {
     background: white;
-    color: var(--text-primary);
+    color: var(--text-secondary);
     border: 1px solid #e2e8f0;
     box-shadow: var(--shadow-sm);
 }
@@ -191,54 +282,145 @@ a:hover {
 .btn-secondary:hover {
     background: #f8fafc;
     border-color: #cbd5e1;
-    transform: translateY(-1px);
-    color: var(--primary-color);
+    color: var(--text-primary);
+    transform: translateY(-2px);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    box-shadow: var(--shadow-sm);
     color: white;
 }
 
 .btn-danger:hover {
-    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+    background: #dc2626;
+    border-color: #dc2626;
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
     color: white;
 }
 
-/* Soft Buttons (Replacing Outline for better visibility) */
+.btn-success {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    box-shadow: var(--shadow-sm);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    border-color: #059669;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    border-color: var(--warning-color);
+    box-shadow: var(--shadow-sm);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+    border-color: #d97706;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Soft Buttons */
+/* Soft Buttons */
+/* Soft Buttons */
 .btn-outline-primary {
-    color: var(--primary-color);
-    background-color: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: var(--primary-color) !important;
+    background-color: #eff6ff !important;
+    border: 1px solid #dbeafe !important;
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--shadow-sm);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-    border-color: var(--primary-color);
+}
+
+.btn-outline-primary i {
+    color: inherit !important;
 }
 
 .btn-outline-danger {
-    color: var(--danger-color);
-    background-color: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+    border: 1px solid #fee2e2 !important;
 }
 
 .btn-outline-danger:hover {
-    background-color: var(--danger-color);
-    color: white;
+    background-color: #dc2626 !important;
+    color: white !important;
+    border-color: #dc2626 !important;
+    box-shadow: var(--shadow-sm);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-    border-color: var(--danger-color);
 }
 
-/* ============================================
-   LAYOUT & NAVIGATION
-   ============================================ */
+.btn-outline-danger i {
+    color: inherit !important;
+}
+
+.btn-outline-warning {
+    color: #d97706 !important;
+    background-color: #fffbeb !important;
+    border: 1px solid #fef3c7 !important;
+}
+
+.btn-outline-warning:hover {
+    background-color: #d97706 !important;
+    color: white !important;
+    border-color: #d97706 !important;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.btn-outline-warning i {
+    color: inherit !important;
+}
+
+.btn-outline-success {
+    color: #059669 !important;
+    /* Darker emerald */
+    background-color: #ecfdf5 !important;
+    border: 1px solid #d1fae5 !important;
+}
+
+.btn-outline-success:hover {
+    background-color: #059669 !important;
+    color: white !important;
+    border-color: #059669 !important;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.btn-outline-success i {
+    color: inherit !important;
+}
+
+/* Ensure icons inside buttons are visible */
+.btn i {
+    vertical-align: middle;
+}
+
+/* Notification Icon Specific Fix */
+#notificationDropdown i {
+    color: var(--primary-color) !important;
+    font-size: 1.25rem;
+}
+
+#notificationDropdown:hover {
+    background-color: #f1f5f9;
+}
 
 /* ============================================
    LAYOUT & NAVIGATION
@@ -303,9 +485,10 @@ a:hover {
 }
 
 .admin-sidebar .nav-link.active {
-    background-color: #eff6ff;
-    color: var(--accent-color);
+    background-color: var(--primary-color);
+    color: white;
     font-weight: 600;
+    box-shadow: var(--shadow-md);
 }
 
 .admin-sidebar .nav-link i {
@@ -313,13 +496,19 @@ a:hover {
     text-align: center;
     margin-right: 10px;
     font-size: 1rem;
-    color: var(--text-muted);
+    color: inherit;
+    /* Inherit color from parent .nav-link */
     transition: color 0.2s ease;
 }
 
-.admin-sidebar .nav-link:hover i,
+.admin-sidebar .nav-link:hover i {
+    color: inherit;
+    /* Inherit color from parent .nav-link on hover */
+}
+
 .admin-sidebar .nav-link.active i {
-    color: var(--accent-color);
+    color: white;
+    /* Explicitly set to white for active state */
 }
 
 /* Main Content */
@@ -371,7 +560,7 @@ a:hover {
 }
 
 .table-hover tbody tr:hover {
-    background-color: rgba(99, 102, 241, 0.02);
+    background-color: rgba(79, 70, 229, 0.02);
 }
 
 /* Badges */
@@ -422,7 +611,7 @@ a:hover {
 .form-select:focus {
     background-color: white;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
 .form-label {
@@ -543,9 +732,10 @@ a:hover {
 }
 
 .admin-sidebar .nav-link.active {
-    color: var(--primary-color);
-    background-color: #e0e7ff;
+    color: white;
+    background-color: var(--primary-color);
     font-weight: 600;
+    box-shadow: var(--shadow-md);
 }
 
 .admin-sidebar .nav-link i {

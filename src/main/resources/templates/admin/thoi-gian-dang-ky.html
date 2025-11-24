@@ -74,7 +74,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Thao tác">
-                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                        <button type="button" class="btn btn-sm btn-primary"
                                             th:attr="data-ma-dot=${period.maDot},data-ngay-mo=${#temporals.format(period.ngayMo, 'yyyy-MM-dd HH:mm')},data-ngay-dong=${#temporals.format(period.ngayDong, 'yyyy-MM-dd HH:mm')},data-mo-ta=${period.moTa}"
                                             onclick="editPeriodFromData(this)" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Chỉnh sửa">
@@ -86,8 +86,8 @@
                                             onsubmit="return confirm('Bạn có chắc muốn xóa đợt đăng ký này?');">
                                             <input type="hidden" th:name="${_csrf.parameterName}"
                                                 th:value="${_csrf.token}" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa">
+                                            <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Xóa">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
