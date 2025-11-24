@@ -1,69 +1,104 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<nav th:fragment="admin-navbar" class="admin-top-navbar" role="navigation" aria-label="Admin top navigation" style="background: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 1rem 2rem; border-bottom: 1px solid #e5e7eb;">
-    <div class="container-fluid d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center">
-            <!-- Nút Hamburger để mở Navigation Drawer (chỉ hiển thị trên mobile) -->
-            <button class="btn btn-outline-secondary me-3 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminNavigationDrawer" aria-controls="adminNavigationDrawer" aria-label="Toggle admin navigation" style="border-radius: 8px;">
-                <i class="fas fa-bars"></i>
-            </button>
+    <nav th:fragment="admin-navbar" class="admin-top-navbar glass-header px-4 py-3">
+        <div class="container-fluid d-flex align-items-center justify-content-between p-0">
+            <div class="d-flex align-items-center">
+                <!-- Hamburger Button (Mobile) -->
+                <button class="btn btn-link text-secondary me-3 d-lg-none p-0" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#adminNavigationDrawer" aria-controls="adminNavigationDrawer"
+                    aria-label="Toggle admin navigation">
+                    <i class="fas fa-bars fs-4"></i>
+                </button>
 
-            <!-- Breadcrumbs Navigation -->
-            <nav aria-label="breadcrumb" class="mb-0">
-                <ol class="breadcrumb mb-0" style="background: transparent; padding: 0; margin: 0;">
-                    <li class="breadcrumb-item">
-                        <a th:href="@{/admin/phong}" class="text-decoration-none d-flex align-items-center" style="color: #667eea; font-weight: 500; transition: color 0.2s;">
-                            <i class="fas fa-home me-1"></i>Trang chủ
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active d-flex align-items-center" aria-current="page" th:if="${pageTitle}">
-                        <i class="fas fa-chevron-right me-2" style="font-size: 0.75rem; color: #9ca3af;"></i>
-                        <span style="color: #2d3748; font-weight: 600;" th:text="${pageTitle}"></span>
-                    </li>
-                </ol>
-            </nav>
-        </div>
+                <!-- Breadcrumbs -->
+                <nav aria-label="breadcrumb" class="d-none d-md-block">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/admin/dashboard}"
+                                class="text-decoration-none d-flex align-items-center text-secondary">
+                                <i class="fas fa-home me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page"
+                            th:if="${pageTitle}">
+                            <span class="fw-semibold text-primary" th:text="${pageTitle}"></span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
 
-        <!-- Right side actions -->
-        <div class="d-flex align-items-center gap-3">
-            <!-- Notifications (optional) -->
-            <button class="btn btn-link text-muted position-relative" type="button" aria-label="Thông báo" style="border: none; padding: 0.5rem;">
-                <i class="fas fa-bell fs-5"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
-            </button>
+            <!-- Right Side Actions -->
+            <div class="d-flex align-items-center gap-4">
+                <!-- Notifications -->
+                <div class="dropdown">
+                    <button class="btn btn-link text-secondary position-relative p-0" type="button"
+                        id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell fs-5"></i>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white"
+                            style="font-size: 0.6rem; padding: 0.25em 0.5em;">3</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 glass-panel mt-3"
+                        aria-labelledby="notificationDropdown" style="min-width: 300px;">
+                        <li class="dropdown-header fw-bold text-uppercase small text-muted">Thông báo</li>
+                        <li><a class="dropdown-item py-2" href="#">Đơn đăng ký mới từ Nguyễn Văn A</a></li>
+                        <li><a class="dropdown-item py-2" href="#">Hợp đồng sắp hết hạn</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-center small text-primary fw-semibold" href="#">Xem tất cả</a>
+                        </li>
+                    </ul>
+                </div>
 
-            <!-- User info -->
-            <div class="d-flex align-items-center text-muted">
-                <i class="fas fa-user-circle me-2 fs-5"></i>
-                <span class="fw-semibold" style="color: #4a5568;" th:text="${admin?.hoTen ?: 'Admin'}">Admin</span>
+                <!-- User Profile -->
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none" id="adminDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="text-end me-3 d-none d-md-block">
+                            <span class="d-block fw-bold text-dark small"
+                                th:text="${admin?.hoTen ?: 'Administrator'}">Administrator</span>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">Quản trị viên</span>
+                        </div>
+                        <div class="user-avatar d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 50%; color: white;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 glass-panel mt-3"
+                        aria-labelledby="adminDropdown">
+                        <li>
+                            <a class="dropdown-item py-2" href="#">
+                                <i class="fas fa-user-circle me-2 text-primary"></i>Hồ sơ cá nhân
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="#">
+                                <i class="fas fa-cog me-2 text-primary"></i>Cài đặt
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post" class="w-100">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <button type="submit" class="dropdown-item py-2 text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<style>
-    .admin-top-navbar {
-        position: sticky;
-        top: 0;
-        z-index: 999;
-        backdrop-filter: blur(10px);
-    }
 
-    .admin-top-navbar .btn-link:hover {
-        color: #667eea !important;
-        transform: scale(1.1);
-    }
-
-    .admin-top-navbar .breadcrumb-item a:hover {
-        color: #5568d3 !important;
-    }
-
-    .admin-top-navbar .breadcrumb-item + .breadcrumb-item::before {
-        content: none;
-    }
-</style>
 
 </body>
+
 </html>
