@@ -38,8 +38,8 @@
         <appender-ref ref="Console" />
     </root>
 
-    <!-- LOG "org.example" at DEBUG level -->
-    <logger name="org.example" level="debug" additivity="false">
+    <!-- LOG "com.dactaphanmem" at DEBUG level -->
+    <logger name="com.dactaphanmem" level="debug" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>

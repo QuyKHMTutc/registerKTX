@@ -60,7 +60,7 @@
 
     <!-- User Navbar Fragment with Offcanvas -->
     <th:block th:fragment="user-navbar">
-        <nav class="navbar navbar-expand-lg navbar-dark sticky-top mb-4 glass-header" role="navigation"
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top mb-4" role="navigation"
             aria-label="Sinh viên navigation">
             <div class="container">
                 <div class="d-flex align-items-center">
@@ -119,8 +119,8 @@
                         <span class="fw-semibold d-none d-md-inline text-primary" th:text="${sinhVien.hoTen}">Sinh
                             Viên</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 glass-panel"
-                        aria-labelledby="studentDropdown" style="border-radius: 12px; margin-top: 0.75rem;">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2"
+                        aria-labelledby="studentDropdown" style="border-radius: 12px;">
                         <li>
                             <a class="dropdown-item py-2" th:href="@{/user/thong-tin-sinh-vien}">
                                 <i class="fas fa-user-circle me-2 text-primary"></i>Thông tin cá nhân
@@ -143,8 +143,7 @@
         </nav>
 
         <!-- Student Offcanvas Sidebar -->
-        <div class="offcanvas offcanvas-start glass-panel" tabindex="-1" id="studentSidebar"
-            aria-labelledby="studentSidebarLabel">
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="studentSidebar" aria-labelledby="studentSidebarLabel">
             <div class="offcanvas-header border-bottom">
                 <h5 class="offcanvas-title text-primary fw-bold" id="studentSidebarLabel">
                     <i class="fas fa-graduation-cap me-2"></i>Menu Sinh Viên
@@ -208,7 +207,7 @@
     <!-- FRAGMENT: Skeleton Loading                                                    -->
     <!-- ============================================================================ -->
     <div th:fragment="skeleton-table(rows)">
-        <div class="table-responsive glass-panel p-3">
+        <div class="table-responsive p-3">
             <table class="table">
                 <thead>
                     <tr>
@@ -317,14 +316,55 @@
     <nav th:fragment="admin-sidebar-fixed" id="sidebarMenuDesktop"
         class="d-none d-md-block sidebar collapse admin-sidebar">
         <div class="position-sticky pt-4">
-            <div class="px-4 mb-5">
-                <a class="d-flex align-items-center text-decoration-none" href="#">
+            <div class="px-4 mb-4">
+                <a class="d-flex align-items-center text-decoration-none mb-4" href="#">
                     <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2"
                         style="width: 40px; height: 40px; color: white;">
                         <i class="fas fa-building"></i>
                     </div>
                     <span class="fs-4 fw-bold text-primary">KTX Manager</span>
                 </a>
+
+                <!-- Admin Profile (Moved to Top) -->
+                <div class="dropdown">
+                    <a href="#"
+                        class="d-flex align-items-center text-decoration-none dropdown-toggle p-2 rounded hover-bg-light"
+                        id="sidebarUserDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="border: 1px solid var(--slate-200);">
+                        <div class="user-avatar d-flex align-items-center justify-content-center shadow-sm me-2"
+                            style="width: 32px; height: 32px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 50%; color: white;">
+                            <i class="fas fa-user-shield" style="font-size: 0.8rem;"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <span class="d-block fw-bold text-dark small text-truncate" style="max-width: 120px;"
+                                th:text="${admin?.hoTen ?: 'Administrator'}">Administrator</span>
+                            <span class="d-block text-muted" style="font-size: 0.7rem;">Quản trị viên</span>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu shadow-lg border-0 mt-2" aria-labelledby="sidebarUserDropdown">
+                        <li>
+                            <a class="dropdown-item py-2" href="#">
+                                <i class="fas fa-user-circle me-2 text-primary"></i>Hồ sơ cá nhân
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="#">
+                                <i class="fas fa-cog me-2 text-primary"></i>Cài đặt
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post" class="w-100">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <button type="submit" class="dropdown-item py-2 text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <ul class="nav flex-column mb-auto">
@@ -378,29 +418,7 @@
                 </li>
             </ul>
 
-            <div class="mt-auto px-3 pb-4">
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase"
-                    style="font-size: 0.75rem; letter-spacing: 0.05em;">
-                    <span>Tài Khoản</span>
-                </h6>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-user-circle"></i>
-                            Hồ Sơ
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <form th:action="@{/auth/logout}" method="post" class="w-100">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Đăng Xuất
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
+
         </div>
     </nav>
 
@@ -415,6 +433,8 @@
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
         <!-- Custom JavaScript Modules -->
+        <script th:src="@{/js/theme-toggle.js}"></script>
+        <script th:src="@{/js/animations.js}"></script>
         <script th:src="@{/js/app.js}"></script>
         <script th:src="@{/js/validation.js}"></script>
     </div>

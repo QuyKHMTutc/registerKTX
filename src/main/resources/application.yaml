@@ -68,4 +68,4 @@ server:
 logging:
   level:
     root: INFO
-    org.example: DEBUG
+    com.dactaphanmem: DEBUG

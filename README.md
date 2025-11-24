@@ -135,29 +135,20 @@ docker-compose up -d
 ```
 
 ## 📡 API Documentation
+The project uses **Swagger/OpenAPI** for automated API documentation.
 
-### Admin Endpoints
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
-#### Room Management
-```http
-GET    /api/admin/phong                    # Get all rooms
-POST   /api/admin/phong                    # Create new room
-PUT    /api/admin/phong/{id}/trangthai     # Update room status
-```
+### Key Endpoints
 
-#### Application Review
-```http
-GET    /api/admin/don-dang-ky/pending      # Get pending applications
-POST   /api/admin/don-dang-ky/{id}/approve # Approve application
-POST   /api/admin/don-dang-ky/{id}/reject  # Reject application
-```
+#### Admin
+- `GET /api/admin/phong`: Get all rooms
+- `POST /api/admin/don-dang-ky/{id}/approve`: Approve application
 
-### User Endpoints
-```http
-POST   /api/user/don-dang-ky               # Submit application
-GET    /api/user/hop-dong                  # Get contracts
-GET    /api/user/hoa-don                   # Get invoices
-```
+#### User
+- `POST /api/user/don-dang-ky`: Submit application
+- `GET /api/user/hoa-don`: Get invoices
 
 ## 🔒 Security
 

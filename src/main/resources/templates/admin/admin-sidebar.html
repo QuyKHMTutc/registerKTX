@@ -1,202 +1,214 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="admin-sidebar" class="admin-sidebar d-flex flex-column flex-shrink-0 p-0 text-white" style="width: 280px; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%); box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);">
-    <!-- Logo/Brand Section -->
-    <div class="p-4 border-bottom border-secondary">
-        <a th:href="@{/admin/phong}" class="d-flex align-items-center text-white text-decoration-none">
-            <div class="logo-icon me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
-                <i class="fas fa-building fs-5"></i>
-            </div>
-            <div>
-                <div class="fw-bold fs-5">Admin KTX</div>
-                <small class="text-muted" style="font-size: 0.75rem;">Quản lý hệ thống</small>
-            </div>
-        </a>
-    </div>
-
-    <!-- Navigation Menu -->
-    <div class="flex-grow-1 overflow-auto" style="padding: 1rem 0;">
-        <ul class="nav nav-pills flex-column mb-auto px-3" style="gap: 0.5rem;">
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/phong') ? 'active' : ''}" 
-                   th:href="@{/admin/phong}" 
-                   aria-label="Quản lý phòng"
-                   style="transition: all 0.3s ease; border: none;">
-                    <i class="fas fa-door-open me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Quản lý Phòng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/don-dang-ky') ? 'active' : ''}" 
-                   th:href="@{/admin/don-dang-ky}" 
-                   aria-label="Duyệt đơn đăng ký"
-                   style="transition: all 0.3s ease; border: none;">
-                    <i class="fas fa-file-alt me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Duyệt Đơn</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/hop-dong') ? 'active' : ''}" 
-                   th:href="@{/admin/hop-dong}" 
-                   aria-label="Quản lý hợp đồng"
-                   style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
-                    <i class="fas fa-file-contract me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Hợp Đồng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/hoa-don') ? 'active' : ''}" 
-                   th:href="@{/admin/hoa-don}" 
-                   aria-label="Quản lý hóa đơn"
-                   style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
-                    <i class="fas fa-receipt me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Hóa Đơn</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/lich-su') ? 'active' : ''}" 
-                   th:href="@{/admin/lich-su-duyet-don}" 
-                   aria-label="Lịch sử duyệt đơn"
-                   style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
-                    <i class="fas fa-clipboard-check me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Lịch Sử</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3" 
-                   th:classappend="${currentURI.startsWith('/admin/tai-khoan') ? 'active' : ''}" 
-                   th:href="@{/admin/tai-khoan}" 
-                   aria-label="Quản lý tài khoản"
-                   style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
-                    <i class="fas fa-users-cog me-3" style="width: 20px; text-align: center;"></i>
-                    <span>Tài Khoản</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <!-- User Profile Section -->
-    <div class="p-3 border-top border-secondary">
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3" 
-               data-bs-toggle="dropdown" 
-               aria-expanded="false"
-               style="transition: all 0.3s ease;">
-                <div class="user-avatar me-3 d-flex align-items-center justify-content-center" 
-                     style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;">
-                    <i class="fas fa-user"></i>
+    <div th:fragment="admin-sidebar" class="admin-sidebar d-flex flex-column flex-shrink-0 p-0 text-white"
+        style="width: 280px; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%); box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);">
+        <!-- Logo/Brand Section -->
+        <div class="p-4 border-bottom border-secondary">
+            <a th:href="@{/admin/phong}" class="d-flex align-items-center text-white text-decoration-none">
+                <div class="logo-icon me-3 d-flex align-items-center justify-content-center"
+                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
+                    <i class="fas fa-building fs-5"></i>
                 </div>
-                <div class="flex-grow-1">
-                    <div class="fw-semibold" th:text="${admin?.hoTen ?: 'Admin'}">Admin</div>
-                    <small class="text-muted" style="font-size: 0.75rem;">Quản trị viên</small>
+                <div>
+                    <div class="fw-bold fs-5">Admin KTX</div>
+                    <small class="text-muted" style="font-size: 0.75rem;">Quản lý hệ thống</small>
                 </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow-lg" style="border-radius: 12px; border: none; margin-left: 0.5rem;">
-                <li><a class="dropdown-item rounded-2" th:href="@{/admin/settings}"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
-                <li><a class="dropdown-item rounded-2" th:href="@{/admin/profile}"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <form th:action="@{/auth/logout}" method="post" class="d-inline w-100">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="dropdown-item rounded-2 w-100 text-start" aria-label="Đăng xuất" style="border: none; background: transparent;">
-                            <i class="fas fa-sign-out-alt me-2"></i>Đăng Xuất
-                        </button>
-                    </form>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="flex-grow-1 overflow-auto" style="padding: 1rem 0;">
+            <ul class="nav nav-pills flex-column mb-auto px-3" style="gap: 0.5rem;">
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/phong') ? 'active' : ''}"
+                        th:href="@{/admin/phong}" aria-label="Quản lý phòng"
+                        style="transition: all 0.3s ease; border: none;">
+                        <i class="fas fa-door-open me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Quản lý Phòng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/don-dang-ky') ? 'active' : ''}"
+                        th:href="@{/admin/don-dang-ky}" aria-label="Duyệt đơn đăng ký"
+                        style="transition: all 0.3s ease; border: none;">
+                        <i class="fas fa-file-alt me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Duyệt Đơn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/thoi-gian-dang-ky') ? 'active' : ''}"
+                        th:href="@{/admin/thoi-gian-dang-ky}" aria-label="Quản lý thời gian đăng ký"
+                        style="transition: all 0.3s ease; border: none;">
+                        <i class="fas fa-clock me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Thời Gian Đăng Ký</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/hop-dong') ? 'active' : ''}"
+                        th:href="@{/admin/hop-dong}" aria-label="Quản lý hợp đồng"
+                        style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
+                        <i class="fas fa-file-contract me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Hợp Đồng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/hoa-don') ? 'active' : ''}"
+                        th:href="@{/admin/hoa-don}" aria-label="Quản lý hóa đơn"
+                        style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
+                        <i class="fas fa-receipt me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Hóa Đơn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/lich-su') ? 'active' : ''}"
+                        th:href="@{/admin/lich-su-duyet-don}" aria-label="Lịch sử duyệt đơn"
+                        style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
+                        <i class="fas fa-clipboard-check me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Lịch Sử</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex align-items-center py-3 px-3 rounded-3"
+                        th:classappend="${currentURI.startsWith('/admin/tai-khoan') ? 'active' : ''}"
+                        th:href="@{/admin/tai-khoan}" aria-label="Quản lý tài khoản"
+                        style="transition: all 0.3s ease; border: none; text-decoration: none; display: block;">
+                        <i class="fas fa-users-cog me-3" style="width: 20px; text-align: center;"></i>
+                        <span>Tài Khoản</span>
+                    </a>
                 </li>
             </ul>
         </div>
+
+        <!-- User Profile Section -->
+        <div class="p-3 border-top border-secondary">
+            <div class="dropdown">
+                <a href="#"
+                    class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="transition: all 0.3s ease;">
+                    <div class="user-avatar me-3 d-flex align-items-center justify-content-center"
+                        style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold" th:text="${admin?.hoTen ?: 'Admin'}">Admin</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">Quản trị viên</small>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow-lg"
+                    style="border-radius: 12px; border: none; margin-left: 0.5rem;">
+                    <li><a class="dropdown-item rounded-2" th:href="@{/admin/settings}"><i
+                                class="fas fa-cog me-2"></i>Cài đặt</a></li>
+                    <li><a class="dropdown-item rounded-2" th:href="@{/admin/profile}"><i
+                                class="fas fa-user me-2"></i>Hồ sơ</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <form th:action="@{/auth/logout}" method="post" class="d-inline w-100">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="dropdown-item rounded-2 w-100 text-start"
+                                aria-label="Đăng xuất" style="border: none; background: transparent;">
+                                <i class="fas fa-sign-out-alt me-2"></i>Đăng Xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-</div>
 
-<style>
-    .admin-sidebar .nav-link {
-        position: relative;
-        overflow: visible;
-        display: block;
-        cursor: pointer;
-        z-index: 1;
-    }
+    <style>
+        .admin-sidebar .nav-link {
+            position: relative;
+            overflow: visible;
+            display: block;
+            cursor: pointer;
+            z-index: 1;
+        }
 
-    .admin-sidebar .nav-link::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 4px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        transform: scaleY(0);
-        transition: transform 0.3s ease;
-        z-index: -1;
-    }
+        .admin-sidebar .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
 
-    .admin-sidebar .nav-link:hover {
-        background: rgba(102, 126, 234, 0.1);
-        padding-left: calc(1rem + 4px);
-    }
+        .admin-sidebar .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            padding-left: calc(1rem + 4px);
+        }
 
-    .admin-sidebar .nav-link.active {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-        border-left: 4px solid #667eea;
-        font-weight: 600;
-        padding-left: calc(1rem + 4px);
-    }
+        .admin-sidebar .nav-link.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-left: 4px solid #667eea;
+            font-weight: 600;
+            padding-left: calc(1rem + 4px);
+        }
 
-    .admin-sidebar .nav-link.active::before {
-        transform: scaleY(1);
-    }
+        .admin-sidebar .nav-link.active::before {
+            transform: scaleY(1);
+        }
 
-    .admin-sidebar .dropdown-toggle:hover {
-        background: rgba(102, 126, 234, 0.1);
-    }
+        .admin-sidebar .dropdown-toggle:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
 
-    .admin-sidebar .dropdown-menu {
-        min-width: 200px;
-    }
+        .admin-sidebar .dropdown-menu {
+            min-width: 200px;
+        }
 
-    .admin-sidebar .dropdown-item {
-        padding: 0.75rem 1rem;
-        transition: all 0.2s ease;
-    }
+        .admin-sidebar .dropdown-item {
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+        }
 
-    .admin-sidebar .dropdown-item:hover {
-        background: rgba(102, 126, 234, 0.2);
-        padding-left: calc(1rem + 4px);
-    }
-</style>
+        .admin-sidebar .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            padding-left: calc(1rem + 4px);
+        }
+    </style>
 
-<script>
-    // Đảm bảo các link trong sidebar hoạt động đúng
-    document.addEventListener('DOMContentLoaded', function() {
-        const navLinks = document.querySelectorAll('.admin-sidebar .nav-link:not(.dropdown-toggle)');
-        navLinks.forEach(link => {
-            // Đảm bảo link có thể click được
-            link.style.pointerEvents = 'auto';
-            link.style.cursor = 'pointer';
-            link.style.position = 'relative';
-            link.style.zIndex = '10';
-            
-            // Debug: Log khi click để kiểm tra
-            link.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                console.log('Sidebar link clicked:', href);
-                // Nếu href hợp lệ, cho phép navigation
-                if (href && href !== '#' && href !== 'javascript:void(0)') {
-                    // Không preventDefault, để browser xử lý navigation tự nhiên
-                } else {
-                    e.preventDefault();
-                }
+    <script>
+        // Đảm bảo các link trong sidebar hoạt động đúng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.admin-sidebar .nav-link:not(.dropdown-toggle)');
+            navLinks.forEach(link => {
+                // Đảm bảo link có thể click được
+                link.style.pointerEvents = 'auto';
+                link.style.cursor = 'pointer';
+                link.style.position = 'relative';
+                link.style.zIndex = '10';
+
+                // Debug: Log khi click để kiểm tra
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    console.log('Sidebar link clicked:', href);
+                    // Nếu href hợp lệ, cho phép navigation
+                    if (href && href !== '#' && href !== 'javascript:void(0)') {
+                        // Không preventDefault, để browser xử lý navigation tự nhiên
+                    } else {
+                        e.preventDefault();
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 
 </body>
+
 </html>
