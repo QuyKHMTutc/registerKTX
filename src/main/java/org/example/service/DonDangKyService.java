@@ -19,21 +19,25 @@ public class DonDangKyService {
     private final SinhVienRepository sinhVienRepository;
     private final ThoiGianDangKyRepository thoiGianDangKyRepository;
     private final YeuCauChonPhongRepository yeuCauChonPhongRepository;
+    private final ThongBaoService thongBaoService;
 
     public DonDangKyService(DonDangKyRepository donDangKyRepository,
-                            SinhVienRepository sinhVienRepository,
-                            ThoiGianDangKyRepository thoiGianDangKyRepository,
-                            YeuCauChonPhongRepository yeuCauChonPhongRepository) {
+            SinhVienRepository sinhVienRepository,
+            ThoiGianDangKyRepository thoiGianDangKyRepository,
+            YeuCauChonPhongRepository yeuCauChonPhongRepository,
+            ThongBaoService thongBaoService) {
         this.donDangKyRepository = donDangKyRepository;
         this.sinhVienRepository = sinhVienRepository;
         this.thoiGianDangKyRepository = thoiGianDangKyRepository;
         this.yeuCauChonPhongRepository = yeuCauChonPhongRepository;
+        this.thongBaoService = thongBaoService;
     }
 
     @Transactional
     public DonDangKy taoDonDangKy(DonDangKyForm form) {
 
-        // Corrected: Use findByMaSV instead of findById as maSV is no longer the primary key
+        // Corrected: Use findByMaSV instead of findById as maSV is no longer the
+        // primary key
         SinhVien sinhVien = sinhVienRepository.findByMaSV(form.getMaSV())
                 .orElseThrow(() -> new IllegalArgumentException("Mã sinh viên không hợp lệ hoặc không tồn tại."));
 
@@ -67,6 +71,12 @@ public class DonDangKyService {
             yeuCau.setMaPhong(form.getMaPhongYeuCau());
             yeuCauChonPhongRepository.save(yeuCau);
         }
+
+        // Create notification for admin
+        String tieuDe = "Đơn đăng ký mới từ " + sinhVien.getHoTen();
+        String noiDung = "Sinh viên " + sinhVien.getHoTen() + " (" + sinhVien.getMaSV()
+                + ") vừa nộp đơn đăng ký ký túc xá.";
+        thongBaoService.createNotification(tieuDe, noiDung, "DON_DANG_KY", savedDon.getMaDon());
 
         return savedDon;
     }

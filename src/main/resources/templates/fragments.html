@@ -12,7 +12,11 @@
         th:content="${description != null ? description : 'Hệ thống quản lý ký túc xá - Quản lý phòng, đơn đăng ký, hợp đồng và hóa đơn'}">
     <meta name="keywords" content="ký túc xá, quản lý phòng, đăng ký phòng, KTX">
     <meta name="author" content="KTX Manager">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#6366f1">
+
+    <!-- CSRF Token -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -20,6 +24,13 @@
     <meta property="og:description" th:content="${description != null ? description : 'Hệ thống quản lý ký túc xá'}">
 
     <title th:text="${title} + ' - KTX Manager'"></title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Preload critical resources -->
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" as="style">
@@ -42,42 +53,74 @@
 <body>
 
     <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2"
-        style="z-index: 9999;">
+    <a href="#main-content" class="skip-to-main">
         Bỏ qua đến nội dung chính
     </a>
 
 
     <!-- User Navbar Fragment with Offcanvas -->
     <th:block th:fragment="user-navbar">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4" role="navigation"
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top mb-4 glass-header" role="navigation"
             aria-label="Sinh viên navigation">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="d-flex align-items-center">
                     <!-- Hamburger Button -->
-                    <button class="btn text-white me-3" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#studentSidebar" aria-controls="studentSidebar" aria-label="Toggle navigation">
-                        <i class="fas fa-bars fs-5"></i>
+                    <button class="btn btn-link text-primary me-3 d-lg-none p-0" type="button"
+                        data-bs-toggle="offcanvas" data-bs-target="#studentSidebar" aria-controls="studentSidebar"
+                        aria-label="Toggle navigation">
+                        <i class="fas fa-bars fs-4"></i>
                     </button>
 
-                    <a class="navbar-brand" th:href="@{/user/don-dang-ky/my-applications}"
+                    <a class="navbar-brand d-flex align-items-center" th:href="@{/user/don-dang-ky/my-applications}"
                         aria-label="Trang chủ sinh viên">
-                        <i class="fas fa-home me-2" aria-hidden="true"></i>Trang Sinh Viên
+                        <i class="fas fa-building me-2 text-primary" aria-hidden="true"></i>
+                        <span>KTX Manager</span>
                     </a>
+                </div>
+
+                <!-- Desktop Menu (Visible on LG screens) -->
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link text-secondary fw-medium" th:href="@{/user/don-dang-ky/create}"
+                                th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/create') ? 'active text-primary fw-bold' : ''}">
+                                <i class="fas fa-plus-circle me-1"></i> Đăng Ký
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link text-secondary fw-medium" th:href="@{/user/don-dang-ky/my-applications}"
+                                th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/my-applications') ? 'active text-primary fw-bold' : ''}">
+                                <i class="fas fa-list me-1"></i> Đơn Của Tôi
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link text-secondary fw-medium" th:href="@{/user/hop-dong}"
+                                th:classappend="${currentURI != null && currentURI.startsWith('/user/hop-dong') ? 'active text-primary fw-bold' : ''}">
+                                <i class="fas fa-file-contract me-1"></i> Hợp Đồng
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link text-secondary fw-medium" th:href="@{/user/hoa-don}"
+                                th:classappend="${currentURI != null && currentURI.startsWith('/user/hoa-don') ? 'active text-primary fw-bold' : ''}">
+                                <i class="fas fa-receipt me-1"></i> Hóa Đơn
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Student Profile Dropdown -->
                 <div class="dropdown ms-3" th:if="${sinhVien != null}">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
                         data-bs-toggle="dropdown" aria-expanded="false" id="studentDropdown">
-                        <div class="user-avatar me-2 d-flex align-items-center justify-content-center"
-                            style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.2); border-radius: 50%;">
-                            <i class="fas fa-user" style="font-size: 0.9rem;"></i>
+                        <div class="user-avatar me-2 d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; color: white;">
+                            <i class="fas fa-user" style="font-size: 1.1rem;"></i>
                         </div>
-                        <span class="fw-semibold" th:text="${sinhVien.hoTen}">Sinh Viên</span>
+                        <span class="fw-semibold d-none d-md-inline text-primary" th:text="${sinhVien.hoTen}">Sinh
+                            Viên</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="studentDropdown"
-                        style="border-radius: 10px; margin-top: 0.5rem;">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 glass-panel"
+                        aria-labelledby="studentDropdown" style="border-radius: 12px; margin-top: 0.75rem;">
                         <li>
                             <a class="dropdown-item py-2" th:href="@{/user/thong-tin-sinh-vien}">
                                 <i class="fas fa-user-circle me-2 text-primary"></i>Thông tin cá nhân
@@ -100,35 +143,39 @@
         </nav>
 
         <!-- Student Offcanvas Sidebar -->
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="studentSidebar" aria-labelledby="studentSidebarLabel">
-            <div class="offcanvas-header bg-primary text-white">
-                <h5 class="offcanvas-title" id="studentSidebarLabel">
+        <div class="offcanvas offcanvas-start glass-panel" tabindex="-1" id="studentSidebar"
+            aria-labelledby="studentSidebarLabel">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title text-primary fw-bold" id="studentSidebarLabel">
                     <i class="fas fa-graduation-cap me-2"></i>Menu Sinh Viên
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body p-0">
-                <div class="list-group list-group-flush">
-                    <a th:href="@{/user/don-dang-ky/create}" class="list-group-item list-group-item-action py-3"
-                        th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/create') ? 'active' : ''}">
+                <div class="list-group list-group-flush bg-transparent">
+                    <a th:href="@{/user/don-dang-ky/create}"
+                        class="list-group-item list-group-item-action py-3 bg-transparent border-0"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/create') ? 'active text-primary fw-bold bg-light' : ''}">
                         <i class="fas fa-plus-circle me-3 text-primary"></i>Tạo Đơn Đăng Ký
                     </a>
                     <a th:href="@{/user/don-dang-ky/my-applications}"
-                        class="list-group-item list-group-item-action py-3"
-                        th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/my-applications') ? 'active' : ''}">
+                        class="list-group-item list-group-item-action py-3 bg-transparent border-0"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/user/don-dang-ky/my-applications') ? 'active text-primary fw-bold bg-light' : ''}">
                         <i class="fas fa-list me-3 text-primary"></i>Đơn Của Tôi
                     </a>
-                    <a th:href="@{/user/hop-dong}" class="list-group-item list-group-item-action py-3"
-                        th:classappend="${currentURI != null && currentURI.startsWith('/user/hop-dong') ? 'active' : ''}">
+                    <a th:href="@{/user/hop-dong}"
+                        class="list-group-item list-group-item-action py-3 bg-transparent border-0"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/user/hop-dong') ? 'active text-primary fw-bold bg-light' : ''}">
                         <i class="fas fa-file-contract me-3 text-primary"></i>Hợp Đồng
                     </a>
-                    <a th:href="@{/user/hoa-don}" class="list-group-item list-group-item-action py-3"
-                        th:classappend="${currentURI != null && currentURI.startsWith('/user/hoa-don') ? 'active' : ''}">
+                    <a th:href="@{/user/hoa-don}"
+                        class="list-group-item list-group-item-action py-3 bg-transparent border-0"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/user/hoa-don') ? 'active text-primary fw-bold bg-light' : ''}">
                         <i class="fas fa-receipt me-3 text-primary"></i>Hóa Đơn
                     </a>
-                    <a th:href="@{/user/lich-su-thanh-toan}" class="list-group-item list-group-item-action py-3"
-                        th:classappend="${currentURI != null && currentURI.startsWith('/user/lich-su-thanh-toan') ? 'active' : ''}">
+                    <a th:href="@{/user/lich-su-thanh-toan}"
+                        class="list-group-item list-group-item-action py-3 bg-transparent border-0"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/user/lich-su-thanh-toan') ? 'active text-primary fw-bold bg-light' : ''}">
                         <i class="fas fa-history me-3 text-primary"></i>Lịch Sử Thanh Toán
                     </a>
                 </div>
@@ -140,18 +187,19 @@
     <!-- ============================================================================ -->
     <!-- FRAGMENT: Breadcrumbs                                                         -->
     <!-- ============================================================================ -->
-    <nav th:fragment="breadcrumbs(items)" aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
+    <nav th:fragment="breadcrumbs(items)" aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
             <li class="breadcrumb-item">
-                <a th:href="@{/}" aria-label="Trang chủ">
+                <a th:href="@{/}" aria-label="Trang chủ" class="text-decoration-none">
                     <i class="fas fa-home me-1" aria-hidden="true"></i>Trang chủ
                 </a>
             </li>
             <li th:each="item, iterStat : ${items}"
                 th:classappend="${iterStat.last} ? 'breadcrumb-item active' : 'breadcrumb-item'"
                 th:attr="aria-current=${iterStat.last} ? 'page' : null">
-                <a th:if="${!iterStat.last}" th:href="${item.url}" th:text="${item.name}"></a>
-                <span th:if="${iterStat.last}" th:text="${item.name}"></span>
+                <a th:if="${!iterStat.last}" th:href="${item.url}" th:text="${item.name}"
+                    class="text-decoration-none"></a>
+                <span th:if="${iterStat.last}" th:text="${item.name}" class="fw-semibold text-primary"></span>
             </li>
         </ol>
     </nav>
@@ -160,7 +208,7 @@
     <!-- FRAGMENT: Skeleton Loading                                                    -->
     <!-- ============================================================================ -->
     <div th:fragment="skeleton-table(rows)">
-        <div class="table-responsive">
+        <div class="table-responsive glass-panel p-3">
             <table class="table">
                 <thead>
                     <tr>
@@ -205,95 +253,170 @@
     </div>
 
     <!-- ============================================================================ -->
+    <!-- FRAGMENT: Admin Navbar (Mobile Only)                                          -->
+    <!-- ============================================================================ -->
+    <nav th:fragment="admin-navbar"
+        class="navbar navbar-light sticky-top bg-white flex-md-nowrap p-0 shadow-sm d-md-none">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-primary fw-bold" href="#">KTX Manager</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+    <!-- ============================================================================ -->
+    <!-- FRAGMENT: Admin Sidebar (Offcanvas for Mobile)                                -->
+    <!-- ============================================================================ -->
+    <div th:fragment="admin-sidebar-offcanvas" class="collapse d-md-none" id="sidebarMenu">
+        <div class="bg-white p-3 shadow-sm">
+            <!-- Mobile Sidebar Content -->
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/dashboard}">
+                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/duyet-don}">
+                        <i class="fas fa-clipboard-check me-2"></i> Duyệt Đơn
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/quan-ly-phong}">
+                        <i class="fas fa-door-open me-2"></i> Quản Lý Phòng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/quan-ly-hop-dong}">
+                        <i class="fas fa-file-contract me-2"></i> Hợp Đồng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/quan-ly-sinh-vien}">
+                        <i class="fas fa-user-graduate me-2"></i> Sinh Viên
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary" th:href="@{/admin/quan-ly-hoa-don}">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Hóa Đơn
+                    </a>
+                </li>
+                <li class="nav-item mt-3">
+                    <a class="nav-link text-danger" th:href="@{/logout}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Đăng Xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================================ -->
+    <!-- FRAGMENT: Admin Sidebar (Fixed for Desktop)                                   -->
+    <!-- ============================================================================ -->
+    <nav th:fragment="admin-sidebar-fixed" id="sidebarMenuDesktop"
+        class="d-none d-md-block sidebar collapse admin-sidebar">
+        <div class="position-sticky pt-4">
+            <div class="px-4 mb-5">
+                <a class="d-flex align-items-center text-decoration-none" href="#">
+                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-2"
+                        style="width: 40px; height: 40px; color: white;">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <span class="fs-4 fw-bold text-primary">KTX Manager</span>
+                </a>
+            </div>
+
+            <ul class="nav flex-column mb-auto">
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/dashboard') ? 'active' : ''}"
+                        th:href="@{/admin/dashboard}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/duyet-don') ? 'active' : ''}"
+                        th:href="@{/admin/duyet-don}">
+                        <i class="fas fa-clipboard-check"></i>
+                        Duyệt Đơn
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/quan-ly-phong') ? 'active' : ''}"
+                        th:href="@{/admin/quan-ly-phong}">
+                        <i class="fas fa-door-open"></i>
+                        Quản Lý Phòng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/quan-ly-hop-dong') ? 'active' : ''}"
+                        th:href="@{/admin/quan-ly-hop-dong}">
+                        <i class="fas fa-file-contract"></i>
+                        Quản Lý Hợp Đồng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/quan-ly-sinh-vien') ? 'active' : ''}"
+                        th:href="@{/admin/quan-ly-sinh-vien}">
+                        <i class="fas fa-user-graduate"></i>
+                        Quản Lý Sinh Viên
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        th:classappend="${currentURI != null && currentURI.startsWith('/admin/quan-ly-hoa-don') ? 'active' : ''}"
+                        th:href="@{/admin/quan-ly-hoa-don}">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        Quản Lý Hóa Đơn
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mt-auto px-3 pb-4">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase"
+                    style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                    <span>Tài Khoản</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-circle"></i>
+                            Hồ Sơ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/auth/logout}" method="post" class="w-100">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Đăng Xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================================ -->
     <!-- FRAGMENT: Common Footer Scripts                                              -->
     <!-- ============================================================================ -->
     <div th:fragment="footer-scripts">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            // Auto-hide alerts after 5 seconds
-            setTimeout(function () {
-                document.querySelectorAll('.alert:not(.alert-dismissible.fade.show)').forEach(function (alert) {
-                    new bootstrap.Alert(alert).close();
-                });
-            }, 5000);
+        <!-- Bootstrap Bundle JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function (e) {
-                // Ctrl/Cmd + K: Focus search
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) {
-                        e.preventDefault();
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-                }
+        <!-- jQuery (if needed for legacy code) -->
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-                // Escape: Close modals and clear search
-                if (e.key === 'Escape') {
-                    const modals = document.querySelectorAll('.modal.show');
-                    modals.forEach(modal => {
-                        const bsModal = bootstrap.Modal.getInstance(modal);
-                        if (bsModal) bsModal.hide();
-                    });
-
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput && document.activeElement === searchInput) {
-                        searchInput.value = '';
-                        searchInput.dispatchEvent(new Event('input'));
-                        searchInput.blur();
-                    }
-                }
-            });
-
-            // Lazy load images when they come into viewport
-            if ('IntersectionObserver' in window) {
-                const imageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            if (img.dataset.src) {
-                                img.src = img.dataset.src;
-                                img.removeAttribute('data-src');
-                                observer.unobserve(img);
-                            }
-                        }
-                    });
-                });
-
-                document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
-            }
-
-            // Add loading state to forms on submit
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', function () {
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    if (submitBtn && !submitBtn.disabled) {
-                        const originalText = submitBtn.innerHTML;
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
-
-                        // Re-enable after 10 seconds as fallback
-                        setTimeout(() => {
-                            if (submitBtn.disabled) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = originalText;
-                            }
-                        }, 10000);
-                    }
-                });
-            });
-
-            // Smooth scroll to top on page load if hash exists
-            if (window.location.hash) {
-                setTimeout(() => {
-                    const element = document.querySelector(window.location.hash);
-                    if (element) {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }, 100);
-            }
-        </script>
+        <!-- Custom JavaScript Modules -->
+        <script th:src="@{/js/app.js}"></script>
+        <script th:src="@{/js/validation.js}"></script>
     </div>
 
 </body>

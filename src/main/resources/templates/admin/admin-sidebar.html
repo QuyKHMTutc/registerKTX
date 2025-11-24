@@ -3,21 +3,14 @@
 
 <body>
 
-    <div th:fragment="admin-sidebar" class="admin-sidebar d-flex flex-column flex-shrink-0 p-0 text-white"
-        style="width: 280px; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%); box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);">
+    <div th:fragment="admin-sidebar"
+        class="sidebar admin-sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
         <!-- Logo/Brand Section -->
-        <div class="p-4 border-bottom border-secondary">
-            <a th:href="@{/admin/phong}" class="d-flex align-items-center text-white text-decoration-none">
-                <div class="logo-icon me-3 d-flex align-items-center justify-content-center"
-                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">
-                    <i class="fas fa-building fs-5"></i>
-                </div>
-                <div>
-                    <div class="fw-bold fs-5">Admin KTX</div>
-                    <small class="text-muted" style="font-size: 0.75rem;">Quản lý hệ thống</small>
-                </div>
-            </a>
-        </div>
+        <a th:href="@{/admin/phong}"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <span class="fs-4">Admin KTX</span>
+        </a>
+        <hr>
 
 
         <!-- Navigation Menu -->
@@ -90,63 +83,6 @@
         </div>
 
     </div>
-
-    <style>
-        .admin-sidebar .nav-link {
-            position: relative;
-            overflow: visible;
-            display: block;
-            cursor: pointer;
-            z-index: 1;
-        }
-
-        .admin-sidebar .nav-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-            z-index: -1;
-        }
-
-        .admin-sidebar .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
-            padding-left: calc(1rem + 4px);
-        }
-
-        .admin-sidebar .nav-link.active {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            border-left: 4px solid #667eea;
-            font-weight: 600;
-            padding-left: calc(1rem + 4px);
-        }
-
-        .admin-sidebar .nav-link.active::before {
-            transform: scaleY(1);
-        }
-
-        .admin-sidebar .dropdown-toggle:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .admin-sidebar .dropdown-menu {
-            min-width: 200px;
-        }
-
-        .admin-sidebar .dropdown-item {
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .admin-sidebar .dropdown-item:hover {
-            background: rgba(102, 126, 234, 0.2);
-            padding-left: calc(1rem + 4px);
-        }
-    </style>
 
     <script>
         // Đảm bảo các link trong sidebar hoạt động đúng

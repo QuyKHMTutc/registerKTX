@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.PhongForm;
 import org.example.model.DonDangKy;
 import org.example.model.NhanVien;
@@ -28,8 +29,8 @@ public class AdminController {
     private final AuthenticationService authService;
 
     public AdminController(PhongService phongService,
-                          DuyetDonService duyetDonService,
-                          AuthenticationService authService) {
+            DuyetDonService duyetDonService,
+            AuthenticationService authService) {
         this.phongService = phongService;
         this.duyetDonService = duyetDonService;
         this.authService = authService;
@@ -41,23 +42,15 @@ public class AdminController {
     }
 
     @PostMapping("/phong")
-    public ResponseEntity<?> createNewPhong(@RequestBody PhongForm phongForm) {
-        try {
-            Phong createdPhong = phongService.createPhong(phongForm);
-            return ResponseEntity.ok(createdPhong);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> createNewPhong(@Valid @RequestBody PhongForm phongForm) {
+        Phong createdPhong = phongService.createPhong(phongForm);
+        return ResponseEntity.ok(createdPhong);
     }
 
     @PutMapping("/phong/{maPhong}/trangthai")
     public ResponseEntity<?> updatePhongTrangThai(@PathVariable Integer maPhong, @RequestParam String trangThai) {
-        try {
-            Phong updatedPhong = phongService.updateTrangThai(maPhong, trangThai);
-            return ResponseEntity.ok(updatedPhong);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Phong updatedPhong = phongService.updateTrangThai(maPhong, trangThai);
+        return ResponseEntity.ok(updatedPhong);
     }
 
     @GetMapping("/don-dang-ky/pending")
@@ -67,45 +60,27 @@ public class AdminController {
 
     @GetMapping("/don-dang-ky/available-rooms")
     public ResponseEntity<?> getAvailableRooms(@RequestParam String maSV) {
-        try {
-            return ResponseEntity.ok(duyetDonService.getAvailableRooms(maSV));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(duyetDonService.getAvailableRooms(maSV));
     }
 
     @PostMapping("/don-dang-ky/{maDon}/approve")
     public ResponseEntity<?> approveApplication(@PathVariable Integer maDon,
-                                                @RequestParam(required = false) Integer maPhong) {
-        try {
-            NhanVien admin = authService.getCurrentNhanVien();
-            DonDangKy don = duyetDonService.getDonDangKyById(maDon);
+            @RequestParam(required = false) Integer maPhong) {
+        NhanVien admin = authService.getCurrentNhanVien();
+        DonDangKy don = duyetDonService.getDonDangKyById(maDon);
 
-            if (maPhong != null) {
-                return ResponseEntity.ok(duyetDonService.approveApplicationWithManualRoom(don, admin.getMaNV(), maPhong));
-            } else {
-                return ResponseEntity.ok(duyetDonService.approveApplicationAutomatically(don, admin.getMaNV()));
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi hệ thống: " + e.getMessage());
+        if (maPhong != null) {
+            return ResponseEntity.ok(duyetDonService.approveApplicationWithManualRoom(don, admin.getMaNV(), maPhong));
+        } else {
+            return ResponseEntity.ok(duyetDonService.approveApplicationAutomatically(don, admin.getMaNV()));
         }
     }
 
     @PostMapping("/don-dang-ky/{maDon}/reject")
     public ResponseEntity<?> rejectApplication(@PathVariable Integer maDon,
-                                               @RequestParam String lyDo) {
-        try {
-            NhanVien admin = authService.getCurrentNhanVien();
-            DonDangKy don = duyetDonService.getDonDangKyById(maDon);
-            return ResponseEntity.ok(duyetDonService.rejectApplication(don, admin.getMaNV(), lyDo));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi hệ thống: " + e.getMessage());
-        }
+            @RequestParam String lyDo) {
+        NhanVien admin = authService.getCurrentNhanVien();
+        DonDangKy don = duyetDonService.getDonDangKyById(maDon);
+        return ResponseEntity.ok(duyetDonService.rejectApplication(don, admin.getMaNV(), lyDo));
     }
 }

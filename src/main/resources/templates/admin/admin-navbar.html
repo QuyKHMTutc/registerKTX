@@ -3,8 +3,7 @@
 
 <body>
 
-    <nav th:fragment="admin-navbar" class="admin-top-navbar" role="navigation" aria-label="Admin top navigation"
-        style="background: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 1rem 2rem; border-bottom: 1px solid #e5e7eb;">
+    <nav th:fragment="admin-navbar" class="admin-top-navbar mb-4" role="navigation" aria-label="Admin top navigation">
         <div class="container-fluid d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <!-- Nút Hamburger để mở Navigation Drawer (chỉ hiển thị trên mobile) -->
@@ -19,7 +18,7 @@
                     <ol class="breadcrumb mb-0" style="background: transparent; padding: 0; margin: 0;">
                         <li class="breadcrumb-item">
                             <a th:href="@{/admin/phong}" class="text-decoration-none d-flex align-items-center"
-                                style="color: #667eea; font-weight: 500; transition: color 0.2s;">
+                                style="color: #6c757d; font-weight: 500; transition: color 0.2s;">
                                 <i class="fas fa-home me-1"></i>Trang chủ
                             </a>
                         </li>
@@ -34,20 +33,37 @@
 
             <!-- Right side actions -->
             <div class="d-flex align-items-center gap-3">
-                <!-- Notifications (optional) -->
-                <button class="btn btn-link text-muted position-relative" type="button" aria-label="Thông báo"
-                    style="border: none; padding: 0.5rem;">
-                    <i class="fas fa-bell fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="font-size: 0.65rem;">0</span>
-                </button>
+                <!-- Notifications Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-link text-primary position-relative" type="button" id="notificationDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" aria-label="Thông báo"
+                        style="border: none; padding: 0.5rem; transition: color 0.2s;">
+                        <i class="fas fa-bell fs-5"></i>
+                        <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                            class="notification-badge-custom"
+                            th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0"
+                        aria-labelledby="notificationDropdown"
+                        style="width: 380px; max-height: 500px; border-radius: 12px; margin-top: 0.5rem;">
+                        <div class="dropdown-header px-3 py-3 border-bottom" style="background: #f8f9fa;">
+                            <h6 class="mb-0 fw-bold text-dark">Thông Báo</h6>
+                        </div>
+                        <div id="notificationList" class="overflow-auto" style="max-height: 400px;">
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-spinner fa-spin fs-4"></i>
+                                <p class="mt-2 mb-0">Đang tải...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- User info with Dropdown -->
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
                         data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown">
                         <div class="user-avatar me-2 d-flex align-items-center justify-content-center"
-                            style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: white;">
+                            style="width: 32px; height: 32px; background-color: #e2e8f0; border-radius: 50%; color: #4a5568;">
                             <i class="fas fa-user" style="font-size: 0.8rem;"></i>
                         </div>
                         <span class="fw-semibold d-none d-md-block" style="color: #4a5568;"
@@ -74,29 +90,141 @@
                 </div>
             </div>
         </div>
+
+
+
+        <script>
+            console.log('Notification script loaded!');
+
+            // Fetch and display notifications
+            function loadNotifications() {
+                console.log('Loading notifications...');
+                fetch('/admin/thong-bao/unread')
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        return response.json();
+                    })
+                    .then(notifications => {
+                        console.log('Notifications received:', notifications);
+                        const listContainer = document.getElementById('notificationList');
+
+                        if (notifications.length === 0) {
+                            listContainer.innerHTML = `
+                                <div class="text-center py-5">
+                                    <div class="mb-3">
+                                        <i class="fas fa-bell-slash" style="font-size: 3rem; color: #cbd5e0;"></i>
+                                    </div>
+                                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Không có thông báo mới</p>
+                                    <small class="text-muted">Bạn đã xem hết tất cả thông báo</small>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        listContainer.innerHTML = notifications.map(notif => `
+                            <div class="notification-item px-3 py-3 border-bottom ${notif.daDoc ? '' : 'unread'}" 
+                                 style="cursor: pointer;" 
+                                 onclick="markAsRead(${notif.maThongBao}, ${notif.maDon})">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 40px; height: 40px; background: #edf2f7;">
+                                            <i class="fas fa-file-alt text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-semibold" style="font-size: 0.9rem;">${notif.tieuDe}</h6>
+                                        <p class="mb-1 text-muted" style="font-size: 0.85rem;">${notif.noiDung}</p>
+                                        <small class="text-muted">
+                                            <i class="far fa-clock me-1"></i>${formatTime(notif.ngayTao)}
+                                        </small>
+                                    </div>
+                                    ${!notif.daDoc ? '<div class="flex-shrink-0"><span class="badge bg-primary rounded-circle p-1" style="width: 10px; height: 10px;"></span></div>' : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                    })
+                    .catch(error => {
+                        console.error('Error loading notifications:', error);
+                        document.getElementById('notificationList').innerHTML = `
+                            <div class="text-center py-5">
+                                <div class="mb-3">
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #fc8181;"></i>
+                                </div>
+                                <p class="text-danger mb-0">Không thể tải thông báo</p>
+                                <small class="text-muted">Vui lòng thử lại sau</small>
+                            </div>
+                        `;
+                    });
+            }
+
+            function markAsRead(notificationId, applicationId) {
+                fetch(`/admin/thong-bao/${notificationId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || ''
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update badge count
+                            const badge = document.getElementById('notificationBadge');
+                            if (badge) {
+                                if (data.unreadCount === 0) {
+                                    badge.remove();
+                                } else {
+                                    badge.textContent = data.unreadCount;
+                                }
+                            }
+                            // Navigate to application
+                            if (applicationId) {
+                                window.location.href = `/admin/don-dang-ky?highlight=${applicationId}`;
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error marking as read:', error));
+            }
+
+            function formatTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000); // seconds
+
+                if (diff < 60) return 'Vừa xong';
+                if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+                if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+                if (diff < 604800) return Math.floor(diff / 86400) + ' ngày trước';
+
+                return date.toLocaleDateString('vi-VN');
+            }
+
+            // Load notifications when dropdown is opened - using both events for compatibility
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('DOM loaded, setting up notification dropdown...');
+                const dropdownButton = document.getElementById('notificationDropdown');
+
+                if (dropdownButton) {
+                    console.log('Notification dropdown button found!');
+
+                    // Try Bootstrap 5 event
+                    dropdownButton.addEventListener('show.bs.dropdown', function () {
+                        console.log('Dropdown opening (Bootstrap event)...');
+                        loadNotifications();
+                    });
+
+                    // Fallback to click event
+                    dropdownButton.addEventListener('click', function () {
+                        console.log('Dropdown clicked...');
+                        setTimeout(loadNotifications, 100);
+                    });
+                } else {
+                    console.error('Notification dropdown button NOT found!');
+                }
+            });
+        </script>
     </nav>
-
-    <style>
-        .admin-top-navbar {
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            backdrop-filter: blur(10px);
-        }
-
-        .admin-top-navbar .btn-link:hover {
-            color: #667eea !important;
-            transform: scale(1.1);
-        }
-
-        .admin-top-navbar .breadcrumb-item a:hover {
-            color: #5568d3 !important;
-        }
-
-        .admin-top-navbar .breadcrumb-item+.breadcrumb-item::before {
-            content: none;
-        }
-    </style>
 
 </body>
 

@@ -7,32 +7,39 @@
 
 <body>
     <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2" style="z-index: 9999;">
+    <a href="#main-content" class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2"
+        style="z-index: 9999;">
         Bỏ qua đến nội dung chính
     </a>
 
     <div class="d-flex">
         <!-- Fixed Sidebar for Desktop -->
-        <div class="d-none d-lg-block" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></div>
+        <!-- Fixed Sidebar for Desktop -->
+        <div class="d-none d-lg-block" style="width: 280px; flex-shrink: 0;">
+            <div th:replace="~{admin/admin-sidebar :: admin-sidebar}"></div>
+        </div>
 
         <!-- Offcanvas Sidebar for Mobile -->
-        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="adminNavigationDrawer" aria-labelledby="adminNavigationDrawerLabel">
+        <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="adminNavigationDrawer"
+            aria-labelledby="adminNavigationDrawerLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="adminNavigationDrawerLabel">Admin Menu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
             </div>
             <div class="offcanvas-body p-0">
                 <div th:replace="~{admin/admin-sidebar :: admin-sidebar}"></div>
             </div>
         </div>
 
-        <div class="main-content-wrapper flex-grow-1">
+        <div class="admin-main-content flex-grow-1">
             <!-- Admin Top Navbar (Minimal) -->
             <nav th:replace="~{admin/admin-navbar :: admin-navbar}"></nav>
 
             <main id="main-content" class="container-fluid py-4">
                 <!-- Flash Messages -->
-                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-3"
+                    role="alert">
                     <i class="fas fa-check-circle me-2"></i>
                     <span th:text="${successMessage}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -50,288 +57,6 @@
     </div>
 
     <div th:replace="~{fragments :: footer-scripts}"></div>
-
-    <style>
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .main-content-wrapper {
-            margin-left: 280px;
-            transition: margin-left 0.3s ease;
-            min-height: 100vh;
-            background: transparent;
-        }
-
-        /* Breadcrumb improvements */
-        main .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 1.5rem;
-        }
-
-        main .breadcrumb-item a {
-            color: #667eea;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        main .breadcrumb-item a:hover {
-            color: #5568d3;
-        }
-
-        main .breadcrumb-item.active {
-            color: #2d3748;
-            font-weight: 600;
-        }
-
-        /* Adjust for smaller screens */
-        @media (max-width: 991.98px) {
-            .main-content-wrapper {
-                margin-left: 0;
-            }
-        }
-
-        /* Page header styling */
-        main h1, main h2, main h3 {
-            color: #2d3748;
-            font-weight: 600;
-        }
-
-        /* Card improvements */
-        main .card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        main .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            padding: 1rem 1.5rem;
-            border: none;
-        }
-
-        /* Table improvements */
-        main .table {
-            margin-bottom: 0;
-        }
-
-        main .table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        main .table thead th {
-            border: none;
-            font-weight: 600;
-            padding: 1rem;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.5px;
-        }
-
-        main .table tbody tr {
-            transition: all 0.2s ease;
-        }
-
-        main .table tbody tr:hover {
-            background-color: rgba(102, 126, 234, 0.05);
-            transform: scale(1.01);
-        }
-
-        /* Button improvements */
-        main .btn {
-            border-radius: 8px;
-            font-weight: 500;
-            padding: 0.5rem 1.25rem;
-            transition: all 0.3s ease;
-        }
-
-        main .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        main .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-        }
-
-        main .btn-primary:hover {
-            background: linear-gradient(135deg, #5568d3 0%, #6a3d8f 100%);
-        }
-
-        /* Alert improvements */
-        main .alert {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Dark Mode Styles */
-        [data-theme="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --bg-tertiary: #4a5568;
-            --text-primary: #f7fafc;
-            --text-secondary: #e2e8f0;
-            --text-muted: #a0aec0;
-            --border-color: #4a5568;
-        }
-
-        [data-theme="dark"] body {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] .main-content-wrapper {
-            background: transparent;
-        }
-
-        [data-theme="dark"] .admin-top-navbar {
-            background: var(--bg-secondary) !important;
-            border-bottom-color: var(--border-color) !important;
-        }
-
-        [data-theme="dark"] .admin-top-navbar h5,
-        [data-theme="dark"] .admin-top-navbar .breadcrumb-item.active span {
-            color: var(--text-primary) !important;
-        }
-
-        [data-theme="dark"] .admin-top-navbar .breadcrumb-item a {
-            color: #667eea !important;
-        }
-
-        [data-theme="dark"] main .card {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        [data-theme="dark"] main .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        [data-theme="dark"] main .card-body {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main h1,
-        [data-theme="dark"] main h2,
-        [data-theme="dark"] main h3,
-        [data-theme="dark"] main h4,
-        [data-theme="dark"] main h5 {
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main .text-muted {
-            color: var(--text-muted) !important;
-        }
-
-        [data-theme="dark"] main .table {
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main .table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        [data-theme="dark"] main .table tbody {
-            background: var(--bg-secondary);
-        }
-
-        [data-theme="dark"] main .table tbody tr {
-            border-color: var(--border-color);
-        }
-
-        [data-theme="dark"] main .table tbody tr:hover {
-            background-color: rgba(102, 126, 234, 0.15);
-        }
-
-        [data-theme="dark"] main .form-control,
-        [data-theme="dark"] main .form-select {
-            background: var(--bg-tertiary);
-            border-color: var(--border-color);
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main .form-control:focus,
-        [data-theme="dark"] main .form-select:focus {
-            background: var(--bg-tertiary);
-            border-color: #667eea;
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main .form-control-plaintext {
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] main .form-label {
-            color: var(--text-secondary);
-        }
-
-        [data-theme="dark"] main .badge {
-            color: white;
-        }
-
-        [data-theme="dark"] .admin-sidebar {
-            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%) !important;
-        }
-    </style>
-
-    <script>
-        // Dark Mode Functionality - Apply on all pages
-        (function() {
-            // Apply theme immediately to prevent flash (before DOM is ready)
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            if (document.documentElement) {
-                document.documentElement.setAttribute('data-theme', currentTheme);
-            }
-            
-            // Initialize dark mode when DOM is ready
-            function initDarkMode() {
-                // Apply theme
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                
-                // Update toggle if it exists (on settings page)
-                const darkModeToggle = document.getElementById('darkModeToggle');
-                const themeLabel = document.getElementById('themeLabel');
-                
-                if (darkModeToggle) {
-                    // Set initial state
-                    darkModeToggle.checked = savedTheme === 'dark';
-                    if (themeLabel) {
-                        themeLabel.textContent = savedTheme === 'dark' ? 'Tối' : 'Sáng';
-                    }
-                    
-                    // Add event listener for toggle (only once)
-                    darkModeToggle.onchange = function() {
-                        const newTheme = this.checked ? 'dark' : 'light';
-                        document.documentElement.setAttribute('data-theme', newTheme);
-                        localStorage.setItem('theme', newTheme);
-                        
-                        const label = document.getElementById('themeLabel');
-                        if (label) {
-                            label.textContent = newTheme === 'dark' ? 'Tối' : 'Sáng';
-                        }
-                    };
-                }
-            }
-            
-            // Wait for DOM to be ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initDarkMode);
-            } else {
-                // DOM is already ready, but wait a bit for all elements to be rendered
-                setTimeout(initDarkMode, 100);
-            }
-        })();
-    </script>
 </body>
+
 </html>

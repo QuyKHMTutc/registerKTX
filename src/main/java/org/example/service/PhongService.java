@@ -26,10 +26,21 @@ public class PhongService {
         this.loaiPhongRepository = loaiPhongRepository;
     }
 
+    /**
+     * Lấy danh sách tất cả các phòng.
+     * 
+     * @return List<Phong> danh sách phòng.
+     */
     public List<Phong> getAllPhongs() {
         return phongRepository.findAll();
     }
 
+    /**
+     * Tạo mới một phòng.
+     * 
+     * @param phongForm DTO chứa thông tin phòng cần tạo.
+     * @return Phong Phòng mới được tạo.
+     */
     public Phong createPhong(PhongForm phongForm) {
         if (phongForm == null) {
             throw new IllegalArgumentException("Thiếu thông tin phòng cần tạo.");
@@ -75,6 +86,13 @@ public class PhongService {
         return phongRepository.save(newPhong);
     }
 
+    /**
+     * Cập nhật trạng thái phòng.
+     * 
+     * @param maPhong      Mã phòng cần cập nhật.
+     * @param trangThaiMoi Trạng thái mới.
+     * @return Phong Phòng sau khi cập nhật.
+     */
     public Phong updateTrangThai(Integer maPhong, String trangThaiMoi) {
         if (maPhong == null) {
             throw new IllegalArgumentException("Mã phòng không được để trống.");
