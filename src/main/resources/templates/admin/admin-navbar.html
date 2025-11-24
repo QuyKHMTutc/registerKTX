@@ -34,22 +34,50 @@
             <div class="d-flex align-items-center gap-4">
                 <!-- Notifications -->
                 <div class="dropdown">
-                    <button class="btn btn-link position-relative p-2" type="button" id="notificationDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static"
-                        style="font-size: 1.25rem; color: #ffffff !important; z-index: 1050;">
-                        <i class="fas fa-bell"
-                            style="color: #ffffff !important; opacity: 1 !important; visibility: visible !important;"></i>
-                        <span class="notification-badge-custom">3</span>
+                    <button class="btn btn-link text-white position-relative p-2" type="button"
+                        id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-bell">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge-custom" th:if="${unreadNotificationCount > 0}"
+                            th:text="${unreadNotificationCount}">3</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3"
                         aria-labelledby="notificationDropdown" style="min-width: 300px;">
-                        <li class="dropdown-header fw-bold text-uppercase small text-muted">Thông báo</li>
-                        <li><a class="dropdown-item py-2" href="#">Đơn đăng ký mới từ Nguyễn Văn A</a></li>
-                        <li><a class="dropdown-item py-2" href="#">Hợp đồng sắp hết hạn</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
+                        <li
+                            class="dropdown-header fw-bold text-uppercase small text-muted d-flex justify-content-between align-items-center">
+                            <span>Thông báo</span>
+                            <span class="badge bg-primary rounded-pill" th:if="${unreadNotificationCount > 0}"
+                                th:text="${unreadNotificationCount} + ' mới'"></span>
                         </li>
-                        <li><a class="dropdown-item text-center small text-primary fw-semibold" href="#">Xem tất cả</a>
+
+                        <li th:if="${#lists.isEmpty(recentNotifications)}">
+                            <span class="dropdown-item py-3 text-center text-muted">Không có thông báo nào</span>
+                        </li>
+
+                        <li th:each="notification : ${recentNotifications}">
+                            <a class="dropdown-item py-2 border-bottom"
+                                th:href="@{/admin/thong-bao/{id}/read(id=${notification.maThongBao})}"
+                                th:classappend="${!notification.daDoc ? 'bg-light fw-semibold' : ''}">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 small" th:text="${notification.noiDung}">Nội dung thông báo</p>
+                                        <small class="text-muted"
+                                            th:text="${#temporals.format(notification.ngayTao, 'dd/MM/yyyy HH:mm')}">Time</small>
+                                    </div>
+                                    <span th:if="${!notification.daDoc}" class="badge bg-danger rounded-circle p-1 ms-2"
+                                        style="width: 8px; height: 8px;"></span>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item text-center small text-primary fw-semibold py-2 mt-1" href="#">Xem
+                                tất cả</a>
                         </li>
                     </ul>
                 </div>
