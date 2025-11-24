@@ -1,0 +1,71 @@
+spring:
+  # ----------------------------------
+  # Cấu hình Kết nối CSDL (DataSource)
+  # ----------------------------------
+  datasource:
+    url: jdbc:mysql://localhost:3306/KTX1?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    # CẢNH BÁO BẢO MẬT: Password database không nên hardcode trong file config
+    # Nên sử dụng environment variables hoặc Spring Cloud Config cho production
+    # Ví dụ: password: ${DB_PASSWORD:defaultPassword}
+    password: Quy060104@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # ----------------------------------
+  # Cấu hình JPA/Hibernate
+  # ----------------------------------
+  jpa:
+    hibernate:
+      # none: Sử dụng schema CSDL có sẵn (ĐÚNG cho môi trường Production/Database đã có dữ liệu)
+      ddl-auto: none
+    properties:
+      hibernate:
+        # Ngăn chặn Hibernate tự động chuyển tên bảng/cột sang chữ thường (lowercase)
+        # Bắt buộc khi MySQL trên Linux (hoặc đã cấu hình) phân biệt chữ hoa/thường.
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true # Hiển thị các lệnh SQL được tạo ra
+
+  # ----------------------------------
+  # Loại trừ AutoConfiguration (Đã chuyển lên pom.xml, nhưng giữ lại ở đây là tùy chọn)
+  # Nếu bạn đã loại trừ trong pom.xml, khối này có thể được xóa
+  # hoặc dùng cách chuẩn:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration
+
+  # ----------------------------------
+  # Cấu hình MVC (Model-View-Controller)
+  # ----------------------------------
+  mvc:
+    favicon:
+      enabled: false # Tắt xử lý favicon để tránh lỗi 404
+  # ----------------------------------
+  # Cấu hình Email (Spring Mail)
+  # ----------------------------------
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tvqqiyi@gmail.com
+    password: hrzz fkuc uvjp tlhp # Cân nhắc sử dụng Mật khẩu ứng dụng (App Password) nếu bạn bật xác minh 2 bước
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: "smtp.gmail.com"
+
+# ----------------------------------
+# Cấu hình Server và Logging
+# ----------------------------------
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.example: DEBUG

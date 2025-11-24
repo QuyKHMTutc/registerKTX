@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: header('Nhập Thông Tin Sinh Viên', 'Trang nhập thông tin cá nhân ban đầu cho sinh viên.')}"></head>
+
+<body>
+
+<nav th:replace="~{fragments :: user-navbar}"></nav>
+
+<main id="main-content" class="container py-4" role="main">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/user/don-dang-ky/my-applications}"><i class="fas fa-home me-1"></i>Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thông tin sinh viên</li>
+        </ol>
+    </nav>
+    
+    <h1 class="h3 mb-4"><i class="fas fa-user-check me-2"></i>Hoàn Tất Thông Tin Cá Nhân</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Vui lòng nhập thông tin của bạn để tiếp tục</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/user/thong-tin-sinh-vien}" th:object="${sinhVienForm}" method="post" id="sinhVienForm" novalidate>
+                <div class="row g-3">
+                    <!-- Mã Sinh Viên (Readonly) -->
+                    <div class="col-md-6">
+                        <label for="maSV" class="form-label">Mã Sinh Viên (Tên đăng nhập)</label>
+                        <input type="text" class="form-control" id="maSV" th:field="*{maSV}" readonly>
+                    </div>
+
+                    <!-- Email (Readonly, lấy từ model) -->
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:value="${email}" readonly>
+                    </div>
+
+                    <!-- Họ Tên (Editable) -->
+                    <div class="col-md-6">
+                        <label for="hoTen" class="form-label">Họ Tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required 
+                               minlength="2" maxlength="100">
+                        <div class="invalid-feedback">Vui lòng nhập họ tên</div>
+                    </div>
+
+                     <div class="col-md-6">
+                        <label for="lop" class="form-label">Lớp <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="lop" th:field="*{lop}" required>
+                        <div class="invalid-feedback">Vui lòng nhập lớp</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="khoa" class="form-label">Khoa <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="khoa" th:field="*{khoa}" required>
+                        <div class="invalid-feedback">Vui lòng nhập khoa</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ngaySinh" class="form-label">Ngày Sinh <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" required
+                               max="2010-12-31" min="1990-01-01">
+                        <div class="invalid-feedback">Vui lòng chọn ngày sinh hợp lệ</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="gioiTinh" class="form-label">Giới Tính <span class="text-danger">*</span></label>
+                        <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" required>
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nu">Nữ</option>
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn giới tính</div>
+                    </div>
+                    <div class="col-12">
+                        <label for="diaChi" class="form-label">Địa Chỉ <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}" required maxlength="200">
+                        <div class="invalid-feedback">Vui lòng nhập địa chỉ</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sdt" class="form-label">Số Điện Thoại <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="sdt" th:field="*{sdt}" required 
+                               pattern="[0-9]{10,11}" title="Số điện thoại phải có 10-11 chữ số">
+                        <div class="invalid-feedback">Số điện thoại phải có 10-11 chữ số</div>
+                    </div>
+                    <div class="col-12 d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Lưu Thông Tin
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer-scripts}"></div>
+
+<script>
+    // Real-time form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('sinhVienForm');
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            field.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid')) {
+                    validateField(this);
+                }
+            });
+        });
+        
+        // Phone number validation
+        const sdtInput = document.getElementById('sdt');
+        sdtInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 0) {
+                validateField(this);
+            }
+        });
+        
+        // Date validation
+        const ngaySinhInput = document.getElementById('ngaySinh');
+        ngaySinhInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const today = new Date();
+            const minDate = new Date('1990-01-01');
+            const maxDate = new Date('2010-12-31');
+            
+            if (selectedDate < minDate || selectedDate > maxDate) {
+                this.setCustomValidity('Ngày sinh phải trong khoảng 1990-2010');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                validateField(this);
+            }
+        });
+        
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+            }
+            
+            form.classList.add('was-validated');
+        });
+        
+        function validateField(field) {
+            const isValid = field.checkValidity();
+            
+            if (isValid) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            } else {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+            }
+            
+            return isValid;
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::meta[name='description'].page-description}, ~{::#admin-settings-content})}">
+
+<head>
+    <title>Cài Đặt</title>
+    <meta name="description" class="page-description" content="Cài đặt và tùy chỉnh giao diện hệ thống.">
+</head>
+
+<body>
+<div id="admin-settings-content" th:fragment="admin-settings-content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 fw-bold" style="color: #2d3748;">
+                <i class="fas fa-cog me-2 text-primary"></i>Cài Đặt
+            </h1>
+            <p class="text-muted mb-0">Tùy chỉnh giao diện và cài đặt hệ thống</p>
+        </div>
+    </div>
+
+    <!-- Settings Cards -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Appearance Settings -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="fas fa-palette me-2 text-primary"></i>Giao Diện
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 fw-semibold">Chế Độ Sáng/Tối</h6>
+                            <p class="text-muted mb-0 small">Chuyển đổi giữa chế độ sáng và tối</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeToggle" style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                            <label class="form-check-label ms-2" for="darkModeToggle">
+                                <span id="themeLabel" class="fw-semibold">Sáng</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Settings (for future use) -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="fas fa-sliders-h me-2 text-primary"></i>Cài Đặt Khác
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">Các cài đặt khác sẽ được thêm vào trong tương lai.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Thông Tin
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-0">
+                        Các cài đặt của bạn sẽ được lưu tự động và áp dụng ngay lập tức.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

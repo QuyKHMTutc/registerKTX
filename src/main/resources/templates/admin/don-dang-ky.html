@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::meta[name='description'].page-description}, ~{::#admin-don-dang-ky-content})}">
+
+<head>
+    <title>Duyệt Đơn Đăng Ký</title>
+    <meta name="description" class="page-description" content="Quản lý và duyệt các đơn đăng ký phòng ký túc xá.">
+</head>
+
+<body>
+<div id="admin-don-dang-ky-content" th:fragment="admin-don-dang-ky-content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 fw-bold" style="color: #2d3748;">
+                <i class="fas fa-clipboard-list me-2 text-primary"></i>Duyệt Đơn Đăng Ký
+            </h1>
+            <p class="text-muted mb-0">Quản lý và duyệt các đơn đăng ký phòng ký túc xá</p>
+        </div>
+        <div class="badge bg-primary fs-6 px-3 py-2" th:if="${pendingApplications != null}">
+            <i class="fas fa-file-alt me-2"></i>
+            <span th:text="${#lists.size(pendingApplications)}">0</span> đơn chờ duyệt
+        </div>
+    </div>
+
+    <!-- Admin Info Card -->
+    <div class="card mb-4 border-0 shadow-sm" th:if="${admin != null}">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                        <i class="fas fa-user-shield text-white fs-4"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1 fw-semibold" style="color: #4a5568;">Người duyệt</h6>
+                    <p class="mb-0 text-muted">
+                        <span th:text="${admin.hoTen}">Nguyễn Văn A</span>
+                        <span class="ms-2 badge bg-secondary" th:text="'Mã: ' + ${admin.maNV}">Mã: 1</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Table Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-semibold">
+                    <i class="fas fa-list me-2 text-primary"></i>Danh sách Đơn chờ duyệt
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="location.reload()" aria-label="Làm mới">
+                    <i class="fas fa-sync-alt me-1"></i>Làm mới
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th style="width: 100px;">Mã đơn</th>
+                        <th>Sinh viên</th>
+                        <th>Đối tượng ưu tiên</th>
+                        <th>Ngày gửi</th>
+                        <th style="width: 280px;">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="don : ${pendingApplications}" style="transition: all 0.2s ease;">
+                        <td>
+                            <span class="badge bg-primary fs-6" th:text="'#' + ${don.maDon}">#1</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 36px; height: 36px; font-size: 0.875rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" th:text="${don.sinhVien?.hoTen}">Tên Sinh Viên</div>
+                                    <small class="text-muted" th:text="'Mã SV: ' + ${don.sinhVien?.maSV}">Mã SV: SV001</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-info" th:text="${don.doiTuongUuTien}">Ưu tiên</span>
+                        </td>
+                        <td>
+                            <div class="text-muted">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                <span th:text="${#temporals.format(don.ngayGui, 'dd-MM-yyyy')}">01-01-2024</span>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="${#temporals.format(don.ngayGui, 'HH:mm')}">10:00</span>
+                            </small>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column gap-2">
+                                <form th:action="@{|/admin/don-dang-ky/${don.maDon}/approve|}" method="post" class="d-grid" onsubmit="return confirmApprove(this, 'tự động')">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn btn-sm btn-primary" aria-label="Duyệt đơn tự động">
+                                        <i class="fas fa-magic me-1"></i>Duyệt tự động
+                                    </button>
+                                </form>
+
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal" data-bs-target="#approveModal"
+                                        th:attr="data-ma-don=${don.maDon}, data-ma-sv=${don.sinhVien?.maSV}, data-ma-phong-yeu-cau=${yeuCauMap[don.maDon]?.maPhong}">
+                                    <i class="fas fa-edit me-1"></i>Chọn phòng
+                                </button>
+
+                                <form th:action="@{|/admin/don-dang-ky/${don.maDon}/reject|}" method="post" class="d-inline-block w-100" onsubmit="return confirmReject(this)">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control" name="lyDo" placeholder="Lý do từ chối" required style="font-size: 0.875rem;">
+                                        <button class="btn btn-outline-danger" type="submit" aria-label="Từ chối">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(pendingApplications)}">
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3" style="opacity: 0.3;"></i>
+                                <p class="mb-0 fs-5">Không có đơn chờ duyệt</p>
+                                <small>Tất cả đơn đăng ký đã được xử lý</small>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DUYỆT ĐƠN THỦ CÔNG -->
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                <form id="approveForm" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0;">
+                        <h5 class="modal-title text-white fw-semibold" id="approveModalLabel">
+                            <i class="fas fa-door-open me-2"></i>Chọn Phòng và Duyệt Đơn
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="phongSelect" class="form-label fw-semibold">
+                                <i class="fas fa-list me-2 text-primary"></i>Chọn phòng phù hợp:
+                            </label>
+                            <div id="room-loader" class="text-center py-4" style="display: none;">
+                                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Đang tải...</span>
+                                </div>
+                                <p class="text-muted">Đang tải danh sách phòng...</p>
+                            </div>
+                            <div id="room-error" class="alert alert-warning border-0 shadow-sm" style="display: none; border-radius: 10px;"></div>
+                            <select id="phongSelect" name="maPhong" class="form-select form-select-lg" required style="border-radius: 10px; border: 2px solid #e5e7eb;">
+                                <option value="">-- Đang tải danh sách phòng --</option>
+                            </select>
+                            <small class="text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle me-1"></i>Chọn phòng phù hợp với yêu cầu của sinh viên
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 16px 16px;">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 8px;">
+                            <i class="fas fa-times me-1"></i>Hủy
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                            <i class="fas fa-check me-1"></i>Xác nhận duyệt
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function confirmApprove(form, type) {
+            return confirm(`Bạn có chắc chắn muốn duyệt đơn này ${type}?`);
+        }
+        
+        function confirmReject(form) {
+            const lyDo = form.querySelector('input[name="lyDo"]').value.trim();
+            if (!lyDo) {
+                alert('Vui lòng nhập lý do từ chối');
+                return false;
+            }
+            return confirm(`Bạn có chắc chắn muốn từ chối đơn này?\nLý do: ${lyDo}`);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Trang duyệt đơn đã tải');
+            
+            const approveModal = document.getElementById('approveModal');
+            if (!approveModal) {
+                console.warn('Không tìm thấy modal approveModal');
+                return;
+            }
+
+            const approveForm = document.getElementById('approveForm');
+            const phongSelect = document.getElementById('phongSelect');
+            const roomLoader = document.getElementById('room-loader');
+            const roomError = document.getElementById('room-error');
+
+            if (!approveForm || !phongSelect || !roomLoader || !roomError) {
+                console.error('Thiếu các phần tử cần thiết cho modal');
+                return;
+            }
+
+            approveModal.addEventListener('show.bs.modal', async function (event) {
+                console.log('Modal đang mở');
+                
+                // Reset form
+                phongSelect.innerHTML = '<option value="">-- Đang tải danh sách phòng --</option>';
+                phongSelect.disabled = true;
+                roomLoader.style.display = 'block';
+                roomError.style.display = 'none';
+                roomError.textContent = '';
+
+                const button = event.relatedTarget;
+                if (!button) {
+                    console.error('Không tìm thấy button trigger');
+                    return;
+                }
+
+                const maDon = button.getAttribute('data-ma-don');
+                const maSV = button.getAttribute('data-ma-sv');
+                const maPhongYeuCau = button.getAttribute('data-ma-phong-yeu-cau');
+
+                if (!maDon || !maSV) {
+                    console.error('Thiếu thông tin mã đơn hoặc mã sinh viên');
+                    roomError.textContent = 'Lỗi: Thiếu thông tin cần thiết. Vui lòng thử lại.';
+                    roomError.style.display = 'block';
+                    roomLoader.style.display = 'none';
+                    return;
+                }
+
+                approveForm.action = `/admin/don-dang-ky/${maDon}/approve`;
+
+                try {
+                    console.log(`Đang tải phòng cho sinh viên: ${maSV}`);
+                    const response = await fetch(`/api/admin/don-dang-ky/available-rooms?maSV=${encodeURIComponent(maSV)}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Lỗi từ server:', errorText);
+                        throw new Error(errorText || 'Không thể tải danh sách phòng.');
+                    }
+                    
+                    const rooms = await response.json();
+                    console.log(`Đã tải ${rooms.length} phòng`);
+
+                    if (!rooms || rooms.length === 0) {
+                        roomError.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Không có phòng nào phù hợp (còn trống và đúng giới tính) cho sinh viên này.';
+                        roomError.style.display = 'block';
+                        phongSelect.innerHTML = '<option value="">-- Không có phòng khả dụng --</option>';
+                        return;
+                    }
+
+                    phongSelect.innerHTML = '';
+                    rooms.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.maPhong;
+                        option.textContent = `${room.soPhong} - ${room.toaNha?.tenToa || 'N/A'}`;
+                        if (maPhongYeuCau && room.maPhong.toString() === maPhongYeuCau.toString()) {
+                            option.selected = true;
+                        }
+                        phongSelect.appendChild(option);
+                    });
+                    phongSelect.disabled = false;
+                    console.log('Đã tải danh sách phòng thành công');
+                } catch (error) {
+                    console.error('Lỗi khi tải phòng:', error);
+                    roomError.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>Lỗi khi tải danh sách phòng: ${error.message}`;
+                    roomError.style.display = 'block';
+                    phongSelect.innerHTML = '<option value="">-- Lỗi khi tải danh sách --</option>';
+                } finally {
+                    roomLoader.style.display = 'none';
+                }
+            });
+
+            // Reset modal when closed
+            approveModal.addEventListener('hidden.bs.modal', function () {
+                phongSelect.innerHTML = '<option value="">-- Đang tải danh sách phòng --</option>';
+                phongSelect.disabled = true;
+                roomLoader.style.display = 'none';
+                roomError.style.display = 'none';
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

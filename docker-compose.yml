@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: ktx-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/dactaphanmem?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+    networks:
+      - ktx-network
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: ktx-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=dactaphanmem
+    ports:
+      - "3307:3306" # Expose on 3307 to avoid conflict with local MySQL if running
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ktx-network
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+
+networks:
+  ktx-network:
+    driver: bridge
+
+volumes:
+  db_data:

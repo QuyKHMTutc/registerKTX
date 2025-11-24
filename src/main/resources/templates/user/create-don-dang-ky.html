@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: header('Tạo Đơn Đăng Ký', 'Trang tạo đơn đăng ký phòng ký túc xá mới.')}"></head>
+
+<body>
+
+<nav th:replace="~{fragments :: user-navbar}"></nav>
+
+<main id="main-content" class="container py-4" role="main">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/user/don-dang-ky/my-applications}"><i class="fas fa-home me-1"></i>Trang chủ</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/user/don-dang-ky/my-applications}">Đơn của tôi</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tạo đơn đăng ký</li>
+        </ol>
+    </nav>
+    
+    <h1 class="h3 mb-4">
+        <i class="fas fa-file-alt me-2"></i>Tạo Đơn Đăng Ký Phòng KTX
+    </h1>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${noOpenDot}" class="alert alert-warning">
+        <strong>Thông báo:</strong> Hiện tại không có đợt đăng ký nào đang mở. Vui lòng quay lại sau.
+    </div>
+
+    <div class="card" th:unless="${noOpenDot}">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Thông Tin Đơn Đăng Ký</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/user/don-dang-ky/create}" th:object="${donDangKyForm}" method="post" id="donDangKyForm" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="mb-3">
+                    <label for="maSV" class="form-label">Mã Sinh Viên</label>
+                    <input type="text" class="form-control" id="maSV" th:field="*{maSV}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="maDot" class="form-label">Đợt Đăng Ký <span class="text-danger">*</span></label>
+                    <select class="form-select" id="maDot" th:field="*{maDot}" required>
+                        <option value="">-- Chọn đợt đăng ký --</option>
+                        <option th:each="dot : ${openDots}" th:value="${dot.maDot}" th:text="${dot.moTa}"></option>
+                    </select>
+                    <div class="invalid-feedback">Vui lòng chọn đợt đăng ký</div>
+                </div>
+                <div class="mb-3">
+                    <label for="doiTuongUuTien" class="form-label">Đối Tượng Ưu Tiên <span class="text-danger">*</span></label>
+                    <select class="form-select" id="doiTuongUuTien" th:field="*{doiTuongUuTien}" required>
+                        <option value="">-- Chọn đối tượng ưu tiên --</option>
+                        <option value="binh_thuong">Bình thường</option>
+                        <option value="ho_ngheo">Hộ nghèo</option>
+                        <option value="con_thuong_binh">Con thương binh</option>
+                        <option value="khuyet_tat">Người khuyết tật</option>
+                    </select>
+                    <div class="invalid-feedback">Vui lòng chọn đối tượng ưu tiên</div>
+                </div>
+                <div class="mb-3">
+                    <label for="ghiChu" class="form-label">Ghi Chú</label>
+                    <textarea class="form-control" id="ghiChu" th:field="*{ghiChu}" rows="3" maxlength="500"></textarea>
+                    <div class="form-text">
+                        <span id="ghiChuCount">0</span>/500 ký tự
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="maLoaiPhong" class="form-label">Loại Phòng Yêu Cầu (Tùy chọn)</label>
+                    <input type="number" class="form-control" id="maLoaiPhong" th:field="*{maLoaiPhong}" min="1">
+                    <div class="form-text">Nhập mã loại phòng nếu bạn có yêu cầu cụ thể</div>
+                </div>
+                <div class="mb-3">
+                    <label for="maPhongYeuCau" class="form-label">Mã Phòng Yêu Cầu (Tùy chọn)</label>
+                    <input type="number" class="form-control" id="maPhongYeuCau" th:field="*{maPhongYeuCau}" min="1">
+                    <div class="form-text">Nhập mã phòng cụ thể nếu bạn muốn đăng ký phòng đó</div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i>Gửi Đơn Đăng Ký
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer-scripts}"></div>
+
+<script>
+    // Real-time form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('donDangKyForm');
+        const ghiChu = document.getElementById('ghiChu');
+        const ghiChuCount = document.getElementById('ghiChuCount');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Character counter for ghiChu
+        ghiChu.addEventListener('input', function() {
+            const length = this.value.length;
+            ghiChuCount.textContent = length;
+            if (length > 450) {
+                ghiChuCount.classList.add('text-warning');
+            } else {
+                ghiChuCount.classList.remove('text-warning');
+            }
+            if (length >= 500) {
+                ghiChuCount.classList.add('text-danger');
+            } else {
+                ghiChuCount.classList.remove('text-danger');
+            }
+        });
+        
+        // Real-time validation for required fields
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            field.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid')) {
+                    validateField(this);
+                }
+            });
+        });
+        
+        // Form submission with validation
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Scroll to first invalid field
+                const firstInvalid = form.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+            } else {
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
+            }
+            
+            form.classList.add('was-validated');
+        });
+        
+        function validateField(field) {
+            const isValid = field.checkValidity();
+            
+            if (isValid) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            } else {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+            }
+            
+            return isValid;
+        }
+    });
+</script>
+
+</body>
+</html>

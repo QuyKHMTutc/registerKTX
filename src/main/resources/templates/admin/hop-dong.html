@@ -1,0 +1,107 @@
+ở<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::meta[name='description'].page-description}, ~{::#admin-hop-dong-content})}">
+
+<head>
+    <title>Quản lý Hợp Đồng</title>
+    <meta name="description" class="page-description" content="Quản lý các hợp đồng thuê phòng ký túc xá của sinh viên.">
+</head>
+
+<body>
+<div id="admin-hop-dong-content" th:fragment="admin-hop-dong-content">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 fw-bold" style="color: #2d3748;">
+                <i class="fas fa-file-contract me-2 text-primary"></i>Quản lý Hợp Đồng
+            </h1>
+            <p class="text-muted mb-0">Quản lý các hợp đồng thuê phòng ký túc xá của sinh viên</p>
+        </div>
+        <div class="badge bg-primary fs-6 px-3 py-2" th:if="${hopDongs != null}">
+            <i class="fas fa-file-contract me-2"></i>
+            <span th:text="${#lists.size(hopDongs)}">0</span> hợp đồng
+        </div>
+    </div>
+
+    <!-- Contracts Table Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-semibold">
+                    <i class="fas fa-list me-2 text-primary"></i>Danh sách Hợp Đồng
+                </h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="location.reload()" aria-label="Làm mới">
+                    <i class="fas fa-sync-alt me-1"></i>Làm mới
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th style="width: 100px;">Mã HĐ</th>
+                        <th>Sinh Viên</th>
+                        <th>Phòng</th>
+                        <th>Ngày Bắt Đầu</th>
+                        <th>Ngày Kết Thúc</th>
+                        <th>Giá</th>
+                        <th>Trạng Thái</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="hd : ${hopDongs}" style="transition: all 0.2s ease;">
+                        <td>
+                            <span class="badge bg-primary fs-6" th:text="'#' + ${hd.maHD}">#1</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 36px; height: 36px; font-size: 0.875rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" th:text="${hd.sinhVien?.hoTen}">Nguyễn Văn A</div>
+                                    <small class="text-muted" th:text="'Mã SV: ' + ${hd.sinhVien?.maSV}">Mã SV: SV001</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold" th:text="${hd.phong?.soPhong}">P101</div>
+                            <small class="text-muted" th:text="${hd.phong?.toaNha?.tenToa}">Tòa A1</small>
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar-alt me-1 text-muted"></i>
+                            <span th:text="${#temporals.format(hd.ngayBatDau, 'dd/MM/yyyy')}">01/01/2025</span>
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar-check me-1 text-muted"></i>
+                            <span th:text="${#temporals.format(hd.ngayKetThuc, 'dd/MM/yyyy')}">01/06/2025</span>
+                        </td>
+                        <td>
+                            <span class="fw-semibold text-success" th:text="${#numbers.formatDecimal(hd.giaThucTe, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">800,000 VNĐ</span>
+                        </td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${hd.trangThai == 'hieu_luc' ? 'bg-success' : (hd.trangThai == 'cho_thanh_toan' ? 'bg-warning' : 'bg-secondary')}"
+                                  th:text="${hd.trangThai == 'hieu_luc' ? 'Hiệu lực' : (hd.trangThai == 'cho_thanh_toan' ? 'Chờ thanh toán' : hd.trangThai)}">Hiệu lực</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${hopDongs == null || #lists.isEmpty(hopDongs)}">
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-file-contract fa-3x mb-3" style="opacity: 0.3;"></i>
+                                <p class="mb-0 fs-5">Chưa có hợp đồng nào</p>
+                                <small>Hợp đồng sẽ xuất hiện sau khi duyệt đơn đăng ký</small>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

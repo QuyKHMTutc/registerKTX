@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="~{fragments :: header(title=${pageTitle}, description=${pageDescription})}"></head>
+
+<body>
+
+<!-- Admin Top Navbar (chỉ hiển thị trên mobile) -->
+<nav th:replace="~{fragments :: admin-navbar}"></nav>
+
+<!-- Navigation Drawer (Offcanvas cho mobile) -->
+<div th:replace="~{fragments :: admin-sidebar-offcanvas}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Admin Sidebar (cố định trên desktop) -->
+        <div th:replace="~{fragments :: admin-sidebar-fixed}"></div>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="main-content">
+            <!-- Breadcrumbs -->
+            <nav th:replace="~{fragments :: breadcrumbs(items=${breadcrumbs})}"></nav>
+
+            <!-- Content specific to each admin page -->
+            <div layout:fragment="content">
+                <!-- Page specific content will be inserted here -->
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Common Footer Scripts -->
+<div th:replace="~{fragments :: footer-scripts}"></div>
+
+</body>
+</html>
