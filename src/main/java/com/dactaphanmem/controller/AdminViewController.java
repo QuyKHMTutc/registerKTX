@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 import com.dactaphanmem.dto.PhongForm;
 import com.dactaphanmem.model.DonDangKy;
 import com.dactaphanmem.model.NhanVien;
@@ -313,6 +315,47 @@ public class AdminViewController {
         model.addAttribute("pageTitle", "Quản lý Thời Gian Đăng Ký");
         model.addAttribute("periods", thoiGianDangKyService.getAllPeriods());
         return "admin/thoi-gian-dang-ky";
+    }
+
+    @PostMapping("/thoi-gian-dang-ky")
+    public String createPeriod(
+            @RequestParam("ngayMo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime ngayMo,
+            @RequestParam("ngayDong") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime ngayDong,
+            @RequestParam("moTa") String moTa,
+            RedirectAttributes redirectAttributes) {
+        try {
+            thoiGianDangKyService.createPeriod(ngayMo, ngayDong, moTa);
+            redirectAttributes.addFlashAttribute("successMessage", "Tạo đợt đăng ký thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/admin/thoi-gian-dang-ky";
+    }
+
+    @PostMapping("/thoi-gian-dang-ky/{maDot}/update")
+    public String updatePeriod(@PathVariable Integer maDot,
+            @RequestParam("ngayMo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime ngayMo,
+            @RequestParam("ngayDong") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime ngayDong,
+            @RequestParam("moTa") String moTa,
+            RedirectAttributes redirectAttributes) {
+        try {
+            thoiGianDangKyService.updatePeriod(maDot, ngayMo, ngayDong, moTa);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật đợt đăng ký thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/admin/thoi-gian-dang-ky";
+    }
+
+    @PostMapping("/thoi-gian-dang-ky/{maDot}/delete")
+    public String deletePeriod(@PathVariable Integer maDot, RedirectAttributes redirectAttributes) {
+        try {
+            thoiGianDangKyService.deletePeriod(maDot);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa đợt đăng ký thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/admin/thoi-gian-dang-ky";
     }
 
     @GetMapping("/thong-bao/{id}/read")
