@@ -172,7 +172,7 @@ public class UserController {
     public String myHopDong(Model model) {
         SinhVien sinhVien = authService.getCurrentSinhVien();
         model.addAttribute("sinhVien", sinhVien);
-        model.addAttribute("hopDongs", hopDongRepository.findBySinhVien(sinhVien));
+        model.addAttribute("hopDongs", hopDongRepository.findBySinhVien_MaSV(sinhVien.getMaSV()));
         return "user/hop-dong";
     }
 
@@ -180,7 +180,7 @@ public class UserController {
     public String myHoaDon(Model model) {
         SinhVien sinhVien = authService.getCurrentSinhVien();
         model.addAttribute("sinhVien", sinhVien);
-        model.addAttribute("hoaDons", hoaDonRepository.findBySinhVien(sinhVien));
+        model.addAttribute("hoaDons", hoaDonRepository.findBySinhVien_MaSV(sinhVien.getMaSV()));
         return "user/hoa-don";
     }
 
@@ -189,7 +189,7 @@ public class UserController {
         SinhVien sinhVien = authService.getCurrentSinhVien();
         model.addAttribute("sinhVien", sinhVien);
         
-        List<HoaDon> hoaDons = hoaDonRepository.findBySinhVien(sinhVien);
+        List<HoaDon> hoaDons = hoaDonRepository.findBySinhVien_MaSV(sinhVien.getMaSV());
         
         List<LichSuThanhToan> lichSuThanhToans = lichSuThanhToanRepository.findByHoaDonIn(hoaDons);
         model.addAttribute("lichSuThanhToans", lichSuThanhToans);

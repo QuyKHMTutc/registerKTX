@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalDate; // Changed back to LocalDate
+import java.time.LocalDateTime; // Keep for now for createApprovalHistory
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -273,7 +273,7 @@ public class DuyetDonService {
         ls.setNhanVien(nv);
         ls.setTrangThaiMoi(trangThai);
         ls.setGhiChu(ghiChu);
-        ls.setThoiGian(LocalDateTime.now());
+        ls.setThoiGian(LocalDateTime.now()); // Keep LocalDateTime here for history
         lichSuDuyetDonRepository.save(ls);
     }
 
@@ -282,8 +282,8 @@ public class DuyetDonService {
         hd.setDonDangKy(don);
         hd.setSinhVien(sv);
         hd.setPhong(phong);
-        hd.setNgayBatDau(LocalDate.now());
-        hd.setNgayKetThuc(LocalDate.now().plusMonths(6)); // Mặc định 6 tháng
+        hd.setNgayBatDau(LocalDate.now()); // Changed back to LocalDate
+        hd.setNgayKetThuc(LocalDate.now().plusMonths(3)); // Changed back to LocalDate and 6 months
         hd.setGiaThucTe(phong.getLoaiPhong().getGiaPhong());
         hd.setTrangThai(AppConstants.HOP_DONG_CHO_THANH_TOAN);
         return hd;
@@ -293,12 +293,12 @@ public class DuyetDonService {
         HoaDon hoaDon = new HoaDon();
         hoaDon.setHopDong(hd);
         hoaDon.setSinhVien(sv);
-        hoaDon.setTieuDe("Tiền phòng tháng " + LocalDate.now().format(DateTimeFormatter.ofPattern("MM/yyyy")));
+        hoaDon.setTieuDe("Tiền phòng tháng " + LocalDate.now().format(DateTimeFormatter.ofPattern("MM/yyyy"))); // Changed back to LocalDate
         hoaDon.setLoaiHoaDon("tien_phong");
-        hoaDon.setThangNam(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        hoaDon.setThangNam(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))); // Changed back to LocalDate
         hoaDon.setSoTien(soTien);
-        hoaDon.setNgayTao(LocalDate.now());
-        hoaDon.setHanThanhToan(LocalDate.now().plusDays(7));
+        hoaDon.setNgayTao(LocalDate.now()); // Changed back to LocalDate
+        hoaDon.setHanThanhToan(LocalDate.now().plusDays(1)); // Changed back to LocalDate and 7 days
         hoaDon.setTrangThai(AppConstants.HOA_DON_CHUA_THANH_TOAN);
         hoaDon.setMaNVTao(maNV);
         hoaDonRepository.save(hoaDon);

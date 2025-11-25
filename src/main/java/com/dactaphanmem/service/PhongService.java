@@ -30,15 +30,21 @@ public class PhongService {
     }
 
     /**
-     * Lấy danh sách tất cả các phòng, đã được sắp xếp theo Tòa nhà rồi đến Số phòng.
+     * Lấy danh sách tất cả các phòng, đã được sắp xếp theo Tòa nhà rồi đến Số
+     * phòng.
      * 
      * @return List<Phong> danh sách phòng đã sắp xếp.
      */
     public List<Phong> getAllPhongs() {
         List<Phong> phongs = phongRepository.findAll();
         return phongs.stream()
-                .sorted(Comparator.comparing((Phong p) -> p.getToaNha().getTenToa())
-                        .thenComparing(Phong::getSoPhong))
+                .sorted(Comparator.comparing(
+                        (Phong p) -> (p.getToaNha() != null && p.getToaNha().getTenToa() != null) ? p.getToaNha().getTenToa() : "",
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                ).thenComparing(
+                        Phong::getSoPhong,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -121,13 +127,31 @@ public class PhongService {
         if (!(trangThaiMoi.equals(AppConstants.PHONG_SAN_SANG) || trangThaiMoi.equals(AppConstants.PHONG_BAO_TRI))) {
             throw new IllegalArgumentException("Chỉ có thể cập nhật trạng thái thành 'Sẵn sàng' hoặc 'Bảo trì'.");
         }
-        
+
         // Không cho phép chuyển phòng "Đầy chỗ" sang "Bảo trì" trực tiếp
-        if (phong.getTrangThai().equals(AppConstants.PHONG_DAY_CHO) && trangThaiMoi.equals(AppConstants.PHONG_BAO_TRI)) {
-            throw new IllegalArgumentException("Không thể bảo trì phòng đang có người ở. Vui lòng chuyển sinh viên trước.");
+        if (phong.getTrangThai().equals(AppConstants.PHONG_DAY_CHO)
+                && trangThaiMoi.equals(AppConstants.PHONG_BAO_TRI)) {
+            throw new IllegalArgumentException(
+                    "Không thể bảo trì phòng đang có người ở. Vui lòng chuyển sinh viên trước.");
         }
 
         phong.setTrangThai(trangThaiMoi);
         return phongRepository.saveAndFlush(phong);
+    }
+
+    /**
+     * Cập nhật trạng thái phòng thành "Sẵn sàng" (trống).
+     * Được sử dụng khi hợp đồng kết thúc hoặc bị hủy.
+     */
+    @Transactional
+    public void updatePhongStatusToAvailable(Integer maPhong) {
+        if (maPhong == null)
+            return;
+
+        Phong phong = phongRepository.findById(maPhong).orElse(null);
+        if (phong != null) {
+            phong.setTrangThai(AppConstants.PHONG_SAN_SANG);
+            phongRepository.save(phong);
+        }
     }
 }

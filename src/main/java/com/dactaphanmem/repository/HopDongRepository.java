@@ -9,9 +9,14 @@ import java.util.List;
 public interface HopDongRepository extends JpaRepository<HopDong, Integer> {
     
     /**
-     * Tìm tất cả hợp đồng của một sinh viên.
+     * Tìm tất cả hợp đồng của một sinh viên (bằng đối tượng SinhVien).
      */
     List<HopDong> findBySinhVien(SinhVien sinhVien);
+
+    /**
+     * Tìm tất cả hợp đồng của một sinh viên (bằng mã SinhVien).
+     */
+    List<HopDong> findBySinhVien_MaSV(String maSV); // Added this method
 
     /**
      * Tìm tất cả hợp đồng liên quan đến một phòng.

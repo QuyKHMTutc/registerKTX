@@ -2,10 +2,10 @@ package com.dactaphanmem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-// Nếu sử dụng giải pháp này, bạn không cần import R2dbcAutoConfiguration nữa
-// @SpringBootApplication(exclude = { R2dbcAutoConfiguration.class })
+// import org.springframework.scheduling.annotation.EnableScheduling; // Removed
 
 @SpringBootApplication
+// @EnableScheduling // Removed
 public class Application {
 
     public static void main(String[] args) {
