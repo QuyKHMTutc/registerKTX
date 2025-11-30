@@ -2,6 +2,7 @@ package com.dactaphanmem.service;
 
 import com.dactaphanmem.model.TaiKhoan;
 import com.dactaphanmem.repository.TaiKhoanRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,13 +10,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class TaiKhoanService {
 
     private final TaiKhoanRepository taiKhoanRepository;
-
-    public TaiKhoanService(TaiKhoanRepository taiKhoanRepository) {
-        this.taiKhoanRepository = taiKhoanRepository;
-    }
 
     public List<TaiKhoan> getTaiKhoanByLoai(String loaiTK) {
         return taiKhoanRepository.findByLoaiTK(loaiTK);

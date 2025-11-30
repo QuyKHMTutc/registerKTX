@@ -4,6 +4,7 @@ import com.dactaphanmem.model.NhanVien;
 import com.dactaphanmem.model.ThongBao;
 import com.dactaphanmem.repository.NhanVienRepository;
 import com.dactaphanmem.repository.ThongBaoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +16,11 @@ import java.util.List;
  * Handles creation, retrieval, and status updates of system notifications.
  */
 @Service
+@RequiredArgsConstructor
 public class ThongBaoService {
 
     private final ThongBaoRepository thongBaoRepository;
     private final NhanVienRepository nhanVienRepository;
-
-    public ThongBaoService(ThongBaoRepository thongBaoRepository,
-            NhanVienRepository nhanVienRepository) {
-        this.thongBaoRepository = thongBaoRepository;
-        this.nhanVienRepository = nhanVienRepository;
-    }
 
     /**
      * Create notifications for all administrators in the system.

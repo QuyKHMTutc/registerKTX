@@ -1,6 +1,6 @@
 package com.dactaphanmem.service;
 
-import com.dactaphanmem.dto.PhongForm;
+import com.dactaphanmem.dto.request.PhongForm;
 import com.dactaphanmem.constant.AppConstants;
 import com.dactaphanmem.model.LoaiPhong;
 import com.dactaphanmem.model.Phong;
@@ -8,6 +8,7 @@ import com.dactaphanmem.model.ToaNha;
 import com.dactaphanmem.repository.LoaiPhongRepository;
 import com.dactaphanmem.repository.PhongRepository;
 import com.dactaphanmem.repository.ToaNhaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
@@ -15,19 +16,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PhongService {
 
     private final PhongRepository phongRepository;
     private final ToaNhaRepository toaNhaRepository;
     private final LoaiPhongRepository loaiPhongRepository;
-
-    public PhongService(PhongRepository phongRepository,
-            ToaNhaRepository toaNhaRepository,
-            LoaiPhongRepository loaiPhongRepository) {
-        this.phongRepository = phongRepository;
-        this.toaNhaRepository = toaNhaRepository;
-        this.loaiPhongRepository = loaiPhongRepository;
-    }
 
     /**
      * Lấy danh sách tất cả các phòng, đã được sắp xếp theo Tòa nhà rồi đến Số
@@ -39,12 +33,12 @@ public class PhongService {
         List<Phong> phongs = phongRepository.findAll();
         return phongs.stream()
                 .sorted(Comparator.comparing(
-                        (Phong p) -> (p.getToaNha() != null && p.getToaNha().getTenToa() != null) ? p.getToaNha().getTenToa() : "",
-                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
-                ).thenComparing(
-                        Phong::getSoPhong,
-                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
-                ))
+                        (Phong p) -> (p.getToaNha() != null && p.getToaNha().getTenToa() != null)
+                                ? p.getToaNha().getTenToa()
+                                : "",
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)).thenComparing(
+                                Phong::getSoPhong,
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,6 @@
 package com.dactaphanmem.service;
 
-import com.dactaphanmem.dto.RegisterRequest;
+import com.dactaphanmem.dto.request.RegisterRequest;
 import com.dactaphanmem.model.TaiKhoan;
 import com.dactaphanmem.model.SinhVien;
 import com.dactaphanmem.repository.NhanVienRepository;
@@ -12,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

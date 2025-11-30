@@ -9,28 +9,20 @@ import com.dactaphanmem.repository.HoaDonRepository;
 import com.dactaphanmem.repository.HopDongRepository;
 import com.dactaphanmem.repository.LichSuThanhToanRepository;
 import com.dactaphanmem.repository.NhanVienRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class ThanhToanService {
 
     private final HoaDonRepository hoaDonRepository;
     private final HopDongRepository hopDongRepository;
     private final LichSuThanhToanRepository lichSuThanhToanRepository;
     private final NhanVienRepository nhanVienRepository;
-
-    public ThanhToanService(HoaDonRepository hoaDonRepository,
-                           HopDongRepository hopDongRepository,
-                           LichSuThanhToanRepository lichSuThanhToanRepository,
-                           NhanVienRepository nhanVienRepository) {
-        this.hoaDonRepository = hoaDonRepository;
-        this.hopDongRepository = hopDongRepository;
-        this.lichSuThanhToanRepository = lichSuThanhToanRepository;
-        this.nhanVienRepository = nhanVienRepository;
-    }
 
     @Transactional
     public LichSuThanhToan thanhToanHoaDon(Integer maHoaDon, String phuongThucThanhToan, Integer maNVXacNhan) {
@@ -64,13 +56,13 @@ public class ThanhToanService {
         lichSu.setSoTienThanhToan(hoaDon.getSoTien());
         lichSu.setNgayThanhToan(LocalDateTime.now());
         lichSu.setPhuongThuc(phuongThucThanhToan);
-        
+
         if (maNVXacNhan != null) {
             NhanVien nhanVien = nhanVienRepository.findById(maNVXacNhan)
                     .orElseThrow(() -> new IllegalArgumentException("Mã Nhân viên xác nhận không hợp lệ."));
             lichSu.setNhanVien(nhanVien); // Gán đối tượng
         }
-        
+
         lichSu.setGhiChu("Thanh toán cho hóa đơn #" + maHoaDon);
 
         return lichSuThanhToanRepository.save(lichSu);

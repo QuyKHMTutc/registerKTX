@@ -14,10 +14,10 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        
+
         if (status != null) {
             Integer statusCode = Integer.valueOf(status.toString());
-            
+
             if (statusCode == HttpStatus.NOT_FOUND.value()) {
                 model.addAttribute("errorCode", "404");
                 model.addAttribute("errorMessage", "Trang không tồn tại");
@@ -32,10 +32,9 @@ public class CustomErrorController implements ErrorController {
                 return "error/403";
             }
         }
-        
+
         model.addAttribute("errorCode", "Lỗi");
         model.addAttribute("errorMessage", "Đã xảy ra lỗi không xác định");
         return "error/error";
     }
 }
-

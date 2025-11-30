@@ -2,6 +2,7 @@ package com.dactaphanmem.service;
 
 import com.dactaphanmem.model.ThoiGianDangKy;
 import com.dactaphanmem.repository.ThoiGianDangKyRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,13 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ThoiGianDangKyService {
 
     private final ThoiGianDangKyRepository thoiGianDangKyRepository;
-
-    public ThoiGianDangKyService(ThoiGianDangKyRepository thoiGianDangKyRepository) {
-        this.thoiGianDangKyRepository = thoiGianDangKyRepository;
-    }
 
     /**
      * Get all registration periods ordered by start date (newest first)

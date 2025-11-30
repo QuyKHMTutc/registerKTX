@@ -4,6 +4,7 @@ package com.dactaphanmem.service;
 import com.dactaphanmem.model.*;
 import com.dactaphanmem.repository.*;
 import com.dactaphanmem.constant.AppConstants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DuyetDonService {
 
     private final DonDangKyRepository donDangKyRepository;
@@ -30,26 +32,9 @@ public class DuyetDonService {
     private final SinhVienRepository sinhVienRepository;
     private final NhanVienRepository nhanVienRepository;
 
-    public DuyetDonService(DonDangKyRepository donDangKyRepository,
-            PhongRepository phongRepository,
-            HopDongRepository hopDongRepository,
-            LichSuDuyetDonRepository lichSuDuyDonRepository,
-            HoaDonRepository hoaDonRepository,
-            YeuCauChonPhongRepository yeuCauChonPhongRepository,
-            SinhVienRepository sinhVienRepository,
-            NhanVienRepository nhanVienRepository) {
-        this.donDangKyRepository = donDangKyRepository;
-        this.phongRepository = phongRepository;
-        this.hopDongRepository = hopDongRepository;
-        this.lichSuDuyetDonRepository = lichSuDuyDonRepository;
-        this.hoaDonRepository = hoaDonRepository;
-        this.yeuCauChonPhongRepository = yeuCauChonPhongRepository;
-        this.sinhVienRepository = sinhVienRepository;
-        this.nhanVienRepository = nhanVienRepository;
-    }
-
     /**
-     * Lấy danh sách các đơn đăng ký đang chờ duyệt, đã được sắp xếp theo thứ tự ưu tiên.
+     * Lấy danh sách các đơn đăng ký đang chờ duyệt, đã được sắp xếp theo thứ tự ưu
+     * tiên.
      * Thứ tự ưu tiên: Khuyết tật > Hộ nghèo > Con thương binh > Bình thường.
      * 
      * @return List<DonDangKy> danh sách đơn chờ duyệt đã sắp xếp.
@@ -62,16 +47,15 @@ public class DuyetDonService {
 
         // Định nghĩa thứ tự ưu tiên
         Map<String, Integer> priorityOrder = Map.of(
-            "khuyet_tat", 1,
-            "ho_ngheo", 2,
-            "con_thuong_binh", 3,
-            "binh_thuong", 4
-        );
+                "khuyet_tat", 1,
+                "ho_ngheo", 2,
+                "con_thuong_binh", 3,
+                "binh_thuong", 4);
 
         // Sắp xếp danh sách
         return pendingApplications.stream()
-            .sorted(Comparator.comparing(don -> priorityOrder.getOrDefault(don.getDoiTuongUuTien(), 5)))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(don -> priorityOrder.getOrDefault(don.getDoiTuongUuTien(), 5)))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -293,7 +277,10 @@ public class DuyetDonService {
         HoaDon hoaDon = new HoaDon();
         hoaDon.setHopDong(hd);
         hoaDon.setSinhVien(sv);
-        hoaDon.setTieuDe("Tiền phòng tháng " + LocalDate.now().format(DateTimeFormatter.ofPattern("MM/yyyy"))); // Changed back to LocalDate
+        hoaDon.setTieuDe("Tiền phòng tháng " + LocalDate.now().format(DateTimeFormatter.ofPattern("MM/yyyy"))); // Changed
+                                                                                                                // back
+                                                                                                                // to
+                                                                                                                // LocalDate
         hoaDon.setLoaiHoaDon("tien_phong");
         hoaDon.setThangNam(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))); // Changed back to LocalDate
         hoaDon.setSoTien(soTien);

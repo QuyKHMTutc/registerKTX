@@ -1,14 +1,14 @@
 package com.dactaphanmem.service;
 
-import com.dactaphanmem.dto.RegisterRequest;
+import com.dactaphanmem.dto.request.RegisterRequest;
 import com.dactaphanmem.model.NhanVien;
 import com.dactaphanmem.model.SinhVien;
 import com.dactaphanmem.model.TaiKhoan;
 import com.dactaphanmem.repository.NhanVienRepository;
 import com.dactaphanmem.repository.SinhVienRepository;
 import com.dactaphanmem.repository.TaiKhoanRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,9 +22,9 @@ import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final TaiKhoanRepository taiKhoanRepository;
     private final NhanVienRepository nhanVienRepository;
@@ -37,39 +37,30 @@ public class AuthenticationService {
     // OTP cho việc reset mật khẩu
     private final Map<String, String> passwordResetOtpStorage = new ConcurrentHashMap<>();
 
-
-    public AuthenticationService(TaiKhoanRepository taiKhoanRepository,
-                                NhanVienRepository nhanVienRepository,
-                                SinhVienRepository sinhVienRepository,
-                                PasswordEncoder passwordEncoder,
-                                EmailService emailService) {
-        this.taiKhoanRepository = taiKhoanRepository;
-        this.nhanVienRepository = nhanVienRepository;
-        this.sinhVienRepository = sinhVienRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-    }
-
     public TaiKhoan getCurrentTaiKhoan() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
             throw new IllegalStateException("Không có người dùng nào được xác thực.");
         }
         String username = authentication.getName();
         return taiKhoanRepository.findByTenDangNhap(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản với tên đăng nhập: " + username));
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("Không tìm thấy tài khoản với tên đăng nhập: " + username));
     }
 
     public NhanVien getCurrentNhanVien() {
         TaiKhoan taiKhoan = getCurrentTaiKhoan();
         return nhanVienRepository.findByTaiKhoan(taiKhoan)
-                .orElseThrow(() -> new IllegalStateException("Tài khoản hiện tại không được liên kết với bất kỳ nhân viên nào."));
+                .orElseThrow(() -> new IllegalStateException(
+                        "Tài khoản hiện tại không được liên kết với bất kỳ nhân viên nào."));
     }
 
     public SinhVien getCurrentSinhVien() {
         TaiKhoan taiKhoan = getCurrentTaiKhoan();
         return sinhVienRepository.findByTaiKhoan(taiKhoan)
-                .orElseThrow(() -> new IllegalStateException("Tài khoản hiện tại không được liên kết với bất kỳ sinh viên nào."));
+                .orElseThrow(() -> new IllegalStateException(
+                        "Tài khoản hiện tại không được liên kết với bất kỳ sinh viên nào."));
     }
 
     // Phương thức hỗ trợ để lấy TaiKhoan theo email
@@ -84,7 +75,7 @@ public class AuthenticationService {
 
     @Transactional
     public TaiKhoan register(RegisterRequest request) {
-        logger.info("Bắt đầu đăng ký tài khoản cho username: {}", request.getUsername());
+        log.info("Bắt đầu đăng ký tài khoản cho username: {}", request.getUsername());
 
         if (taiKhoanRepository.existsByTenDangNhap(request.getUsername())) {
             throw new IllegalArgumentException("Tên đăng nhập đã tồn tại.");
@@ -102,13 +93,13 @@ public class AuthenticationService {
         taiKhoan.setEnabled(false);
 
         TaiKhoan savedTaiKhoan = taiKhoanRepository.save(taiKhoan);
-        logger.info("Đã lưu tài khoản thành công. Mã TK: {}", savedTaiKhoan.getMaTK());
+        log.info("Đã lưu tài khoản thành công. Mã TK: {}", savedTaiKhoan.getMaTK());
 
         SinhVien sinhVien = new SinhVien();
         sinhVien.setMaSV(request.getUsername());
         sinhVien.setTaiKhoan(savedTaiKhoan);
         sinhVienRepository.save(sinhVien);
-        logger.info("Đã tạo thông tin sinh viên với maSV: {}", request.getUsername());
+        log.info("Đã tạo thông tin sinh viên với maSV: {}", request.getUsername());
 
         sendOtp(savedTaiKhoan.getTenDangNhap(), savedTaiKhoan.getEmail(), "activation");
 
@@ -136,7 +127,7 @@ public class AuthenticationService {
         taiKhoan.setEnabled(true);
         taiKhoanRepository.save(taiKhoan);
         activationOtpStorage.remove(username);
-        logger.info("Tài khoản {} đã được kích hoạt thành công.", username);
+        log.info("Tài khoản {} đã được kích hoạt thành công.", username);
 
         return taiKhoan;
     }
@@ -155,7 +146,7 @@ public class AuthenticationService {
     public void generatePasswordResetToken(String email) {
         TaiKhoan taiKhoan = taiKhoanRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản nào với email này."));
-        
+
         sendOtp(taiKhoan.getTenDangNhap(), email, "password-reset");
     }
 
@@ -189,7 +180,7 @@ public class AuthenticationService {
         taiKhoan.setMatKhau(passwordEncoder.encode(newPassword));
         taiKhoanRepository.save(taiKhoan);
         passwordResetOtpStorage.remove(username);
-        logger.info("Đã đặt lại mật khẩu thành công cho tài khoản {}", username);
+        log.info("Đã đặt lại mật khẩu thành công cho tài khoản {}", username);
     }
 
     private void sendOtp(String username, String email, String type) {
@@ -208,19 +199,19 @@ public class AuthenticationService {
         } else {
             throw new IllegalArgumentException("Loại OTP không hợp lệ.");
         }
-        
-        logger.info("Tạo mã OTP mới ({}) : {} cho user: {}", type, otp, username);
+
+        log.info("Tạo mã OTP mới ({}) : {} cho user: {}", type, otp, username);
         emailService.sendSimpleMessage(email, subject, emailContent);
-        logger.info("Đã gửi OTP ({}) đến email: {}", type, email);
+        log.info("Đã gửi OTP ({}) đến email: {}", type, email);
     }
 
     private String createEmailContent(String otp, String purpose) {
         return "Xin chào bạn,\n\n"
-             + "Mã xác thực OTP của bạn là: " + otp + "\n\n"
-             + "Vui lòng sử dụng mã này " + purpose + ".\n"
-             + "Mã OTP này sẽ hết hạn sau vài phút.\n\n"
-             + "Trân trọng,\n"
-             + "Ban quản lý KTX";
+                + "Mã xác thực OTP của bạn là: " + otp + "\n\n"
+                + "Vui lòng sử dụng mã này " + purpose + ".\n"
+                + "Mã OTP này sẽ hết hạn sau vài phút.\n\n"
+                + "Trân trọng,\n"
+                + "Ban quản lý KTX";
     }
 
     private String generateOtp() {

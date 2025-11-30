@@ -1,22 +1,18 @@
 package com.dactaphanmem.service;
 
-import com.dactaphanmem.dto.SinhVienForm;
+import com.dactaphanmem.dto.request.SinhVienForm;
 import com.dactaphanmem.model.SinhVien;
 import com.dactaphanmem.repository.SinhVienRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class SinhVienService {
 
     private final SinhVienRepository sinhVienRepository;
     private final AuthenticationService authService;
-
-    public SinhVienService(SinhVienRepository sinhVienRepository,
-                          AuthenticationService authService) {
-        this.sinhVienRepository = sinhVienRepository;
-        this.authService = authService;
-    }
 
     /**
      * Cập nhật thông tin chi tiết cho sinh viên sau khi đăng ký.
@@ -27,11 +23,12 @@ public class SinhVienService {
         // Lấy sinh viên hiện tại, đã được tạo lúc đăng ký với maSV = tenDangNhap
         SinhVien currentSinhVien = authService.getCurrentSinhVien();
 
-        // Kiểm tra xem maSV từ form có khớp với maSV của người dùng đang đăng nhập không
+        // Kiểm tra xem maSV từ form có khớp với maSV của người dùng đang đăng nhập
+        // không
         if (!currentSinhVien.getMaSV().equals(form.getMaSV())) {
             throw new IllegalArgumentException("Bạn không được phép thay đổi Mã sinh viên.");
         }
-        
+
         // Cập nhật các thông tin còn thiếu từ form
         currentSinhVien.setHoTen(form.getHoTen());
         currentSinhVien.setLop(form.getLop());
@@ -59,10 +56,10 @@ public class SinhVienService {
         currentSinhVien.setSdt(updatedInfo.getSdt());
         currentSinhVien.setLop(updatedInfo.getLop());
         currentSinhVien.setKhoa(updatedInfo.getKhoa());
-        
+
         return sinhVienRepository.save(currentSinhVien);
     }
-    
+
     /**
      * Kiểm tra xem sinh viên đã điền thông tin cơ bản (Họ tên) chưa.
      */

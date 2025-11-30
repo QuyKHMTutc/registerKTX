@@ -1,49 +1,54 @@
 package com.dactaphanmem.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDate; // Changed back to LocalDate
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "hoa_don")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class HoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_hoa_don")
-    private Integer maHoaDon;
+    Integer maHoaDon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_hop_dong", nullable = false)
-    private HopDong hopDong;
+    HopDong hopDong;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_sv", nullable = false)
-    private SinhVien sinhVien;
+    SinhVien sinhVien;
 
     @Column(name = "tieu_de")
-    private String tieuDe;
+    String tieuDe;
 
     @Column(name = "loai_hoa_don")
-    private String loaiHoaDon;
+    String loaiHoaDon;
 
     @Column(name = "thang_nam")
-    private String thangNam;
+    String thangNam;
 
     @Column(name = "so_tien")
-    private BigDecimal soTien;
+    BigDecimal soTien;
 
     @Column(name = "ngay_tao")
-    private LocalDate ngayTao; // Changed back to LocalDate
+    LocalDate ngayTao;
 
     @Column(name = "han_thanh_toan")
-    private LocalDate hanThanhToan; // Changed back to LocalDate
+    LocalDate hanThanhToan;
 
     @Column(name = "trang_thai")
-    private String trangThai;
+    String trangThai;
 
     @Column(name = "ma_nv_tao")
-    private Integer maNVTao;
+    Integer maNVTao;
 }

@@ -1,63 +1,57 @@
 package com.dactaphanmem.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-        @Autowired
-        private CustomUserDetailsService userDetailsService;
+        private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+        private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
-        @Autowired
-        private PasswordEncoder passwordEncoder;
-
-        @Autowired
-        private AuthenticationSuccessHandler authenticationSuccessHandler;
-
-        @Autowired
-        private AuthenticationFailureHandler customAuthenticationFailureHandler; // Inject handler mới
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+                return configuration.getAuthenticationManager();
+        }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .authorizeHttpRequests(auth -> auth
-                                                // 1. Cho phép truy cập công khai
+                                                // Public endpoints
                                                 .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**",
                                                                 "/webjars/**",
-                                                                "/v3/api-docs/**",
-                                                                "/swagger-ui/**",
-                                                                "/swagger-ui.html")
+                                                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                                                                "/api/auth/**")
                                                 .permitAll()
-
-                                                // 2. Các tuyến đường của Admin (cả web và API)
+                                                // Admin endpoints
                                                 .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
-
-                                                // 3. Các tuyến đường của User (cả web và API)
+                                                // User endpoints
                                                 .requestMatchers("/user/**", "/api/user/**").hasRole("SINH_VIEN")
-
-                                                // 4. Tất cả các request khác cần đăng nhập
                                                 .anyRequest().authenticated())
+                                // Form login for web UI
                                 .formLogin(form -> form
                                                 .loginPage("/auth/login")
                                                 .loginProcessingUrl("/auth/login")
                                                 .usernameParameter("tenDangNhap")
                                                 .passwordParameter("matKhau")
                                                 .successHandler(authenticationSuccessHandler)
-                                                .failureHandler(customAuthenticationFailureHandler) // Sử dụng handler
-                                                                                                    // của chúng ta
+                                                .failureHandler(customAuthenticationFailureHandler)
                                                 .permitAll())
-                                .exceptionHandling(ex -> ex
-                                                .accessDeniedPage("/auth/login?accessDenied=true"))
+                                // Logout
                                 .logout(logout -> logout
                                                 .logoutUrl("/auth/logout")
                                                 .logoutSuccessUrl("/auth/login?logout=true")
@@ -65,16 +59,22 @@ public class SecurityConfig {
                                                 .clearAuthentication(true)
                                                 .deleteCookies("JSESSIONID")
                                                 .permitAll())
+                                // Exception handling
+                                .exceptionHandling(ex -> ex
+                                                .defaultAuthenticationEntryPointFor(jwtAuthenticationEntryPoint,
+                                                                new org.springframework.security.web.util.matcher.AntPathRequestMatcher(
+                                                                                "/api/**"))
+                                                .accessDeniedPage("/auth/login?accessDenied=true"))
+                                // Session management: stateful for web, stateless for API
                                 .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                                                 .maximumSessions(1)
                                                 .maxSessionsPreventsLogin(false))
-                                // Security Headers - Protect against common web vulnerabilities
+                                // Security headers
                                 .headers(headers -> headers
-                                                .frameOptions(frame -> frame.deny()) // Prevent clickjacking
-                                                .contentTypeOptions(contentType -> contentType.disable()) // X-Content-Type-Options:
-                                                                                                          // nosniff
-                                                .xssProtection(xss -> xss.disable()) // Modern browsers have built-in
-                                                                                     // XSS protection
+                                                .frameOptions(frame -> frame.deny())
+                                                .contentTypeOptions(contentType -> contentType.disable())
+                                                .xssProtection(xss -> xss.disable())
                                                 .contentSecurityPolicy(csp -> csp
                                                                 .policyDirectives("default-src 'self'; " +
                                                                                 "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://code.jquery.com; "
@@ -85,12 +85,9 @@ public class SecurityConfig {
                                                                                 +
                                                                                 "img-src 'self' data: https:;")));
 
-                return http.build();
-        }
+                // Add JWT filter for API endpoints
+                http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        @Autowired
-        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-                auth.userDetailsService(userDetailsService)
-                                .passwordEncoder(passwordEncoder);
+                return http.build();
         }
 }

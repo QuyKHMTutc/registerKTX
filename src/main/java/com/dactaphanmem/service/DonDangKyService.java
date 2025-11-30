@@ -1,11 +1,12 @@
 package com.dactaphanmem.service;
 
-import com.dactaphanmem.dto.DonDangKyForm;
+import com.dactaphanmem.dto.request.DonDangKyForm;
 import com.dactaphanmem.model.*;
 import com.dactaphanmem.repository.DonDangKyRepository;
 import com.dactaphanmem.repository.SinhVienRepository;
 import com.dactaphanmem.repository.ThoiGianDangKyRepository;
 import com.dactaphanmem.repository.YeuCauChonPhongRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DonDangKyService {
 
     private final DonDangKyRepository donDangKyRepository;
@@ -20,18 +22,6 @@ public class DonDangKyService {
     private final ThoiGianDangKyRepository thoiGianDangKyRepository;
     private final YeuCauChonPhongRepository yeuCauChonPhongRepository;
     private final ThongBaoService thongBaoService;
-
-    public DonDangKyService(DonDangKyRepository donDangKyRepository,
-            SinhVienRepository sinhVienRepository,
-            ThoiGianDangKyRepository thoiGianDangKyRepository,
-            YeuCauChonPhongRepository yeuCauChonPhongRepository,
-            ThongBaoService thongBaoService) {
-        this.donDangKyRepository = donDangKyRepository;
-        this.sinhVienRepository = sinhVienRepository;
-        this.thoiGianDangKyRepository = thoiGianDangKyRepository;
-        this.yeuCauChonPhongRepository = yeuCauChonPhongRepository;
-        this.thongBaoService = thongBaoService;
-    }
 
     @Transactional
     public DonDangKy taoDonDangKy(DonDangKyForm form) {

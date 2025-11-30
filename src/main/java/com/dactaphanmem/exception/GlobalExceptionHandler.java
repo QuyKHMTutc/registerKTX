@@ -1,128 +1,63 @@
 package com.dactaphanmem.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.dactaphanmem.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.Map;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import java.util.stream.Collectors;
+
+@RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException e) {
+        log.error("IllegalArgumentException: {}", e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(e.getMessage()));
+    }
 
-    /**
-     * Handle validation errors from @Valid annotations
-     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalState(IllegalStateException e) {
+        log.error("IllegalStateException: {}", e.getMessage());
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(e.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-        String requestURI = request.getRequestURI();
-
-        // Extract first validation error message
-        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
-                .findFirst()
-                .map(error -> error.getDefaultMessage())
-                .orElse("Dữ liệu không hợp lệ");
-
-        logger.warn("Validation error at {}: {}", requestURI, errorMessage);
-
-        if (isApiRequest(request)) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", errorMessage));
-        }
-
-        redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-        return "redirect:" + getReferer(request);
+    public ResponseEntity<ApiResponse<?>> handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(message));
     }
 
-    /**
-     * Handle business logic exceptions (e.g., invalid arguments, state violations)
-     */
-    @ExceptionHandler({ IllegalArgumentException.class, IllegalStateException.class })
-    public Object handleBusinessException(RuntimeException ex, HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-        String requestURI = request.getRequestURI();
-        logger.warn("Business exception at {}: {}", requestURI, ex.getMessage());
-
-        if (isApiRequest(request)) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", ex.getMessage()));
-        }
-
-        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-        return "redirect:" + getReferer(request);
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<?>> handleAuthenticationException(AuthenticationException e) {
+        log.error("AuthenticationException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error("Thông tin đăng nhập không chính xác"));
     }
 
-    /**
-     * Handle database integrity violations (e.g., duplicate keys)
-     */
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public Object handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-        Throwable rootCauseException = ex.getRootCause();
-        String rootCause = rootCauseException != null ? rootCauseException.getMessage() : ex.getMessage();
-        String errorMessage = "Lỗi dữ liệu: ";
-
-        if (rootCause != null) {
-            if (rootCause.contains("Duplicate entry")) {
-                if (rootCause.contains("'phong.so_phong'")) {
-                    errorMessage = "Số phòng đã tồn tại trong tòa nhà này.";
-                } else if (rootCause.contains("'sinh_vien.ma_sv'")) {
-                    errorMessage = "Mã sinh viên đã tồn tại.";
-                } else if (rootCause.contains("'tai_khoan.ten_dang_nhap'")) {
-                    errorMessage = "Tên đăng nhập đã tồn tại.";
-                } else if (rootCause.contains("'tai_khoan.email'")) {
-                    errorMessage = "Email đã tồn tại.";
-                } else {
-                    errorMessage = "Dữ liệu đã tồn tại.";
-                }
-            } else {
-                errorMessage = "Dữ liệu không hợp lệ hoặc vi phạm ràng buộc.";
-            }
-        }
-
-        logger.warn("Data integrity violation at {}: {}", request.getRequestURI(), errorMessage);
-
-        if (isApiRequest(request)) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "message", errorMessage));
-        }
-
-        redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-        return "redirect:" + getReferer(request);
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException e) {
+        log.error("AccessDeniedException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("Bạn không có quyền truy cập tài nguyên này"));
     }
 
-    /**
-     * Handle unexpected system errors
-     */
     @ExceptionHandler(Exception.class)
-    public Object handleGenericException(Exception ex, HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
-        String requestURI = request.getRequestURI();
-        logger.error("Unhandled exception at {}: {}", requestURI, ex.getMessage(), ex);
-
-        String genericMessage = "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.";
-
-        if (isApiRequest(request)) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "message", genericMessage));
-        }
-
-        redirectAttributes.addFlashAttribute("errorMessage", genericMessage);
-        return "redirect:" + getReferer(request);
-    }
-
-    private boolean isApiRequest(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        return requestURI != null && requestURI.startsWith("/api/");
-    }
-
-    private String getReferer(HttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        return (referer != null && !referer.isEmpty()) ? referer : "/";
+    public ResponseEntity<ApiResponse<?>> handleGenericException(Exception e) {
+        log.error("Unexpected error: ", e);
+        return ResponseEntity.internalServerError()
+                .body(ApiResponse.error("Có lỗi không mong muốn xảy ra: " + e.getMessage()));
     }
 }

@@ -8,7 +8,7 @@ spring:
     # CẢNH BÁO BẢO MẬT: Password database không nên hardcode trong file config
     # Nên sử dụng environment variables hoặc Spring Cloud Config cho production
     # Ví dụ: password: ${DB_PASSWORD:defaultPassword}
-    password: Quy060104@
+    password: 180879
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # ----------------------------------
@@ -17,7 +17,7 @@ spring:
   jpa:
     hibernate:
       # none: Sử dụng schema CSDL có sẵn (ĐÚNG cho môi trường Production/Database đã có dữ liệu)
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         # Ngăn chặn Hibernate tự động chuyển tên bảng/cột sang chữ thường (lowercase)
